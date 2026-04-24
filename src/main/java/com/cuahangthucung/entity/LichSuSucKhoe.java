@@ -1,30 +1,44 @@
 package com.cuahangthucung.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "LICHSU_SUC_KHOE")
 @Data
 public class LichSuSucKhoe {
-    @Id
-    @Column(name = "MaLS")
-    private String maLS;
 
-    @Column(name = "MaPet")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "MaLS")
+    private Integer maLS;
+
+    @NotBlank(message = "Mã Pet không được để trống")
+    @Column(name = "MaPet", length = 20, nullable = false)
     private String maPet;
 
-    @Column(name = "MoTa")
+    @NotBlank(message = "Mô tả sức khỏe không được để trống")
+    @Size(max = 300, message = "Mô tả không được vượt quá 300 ký tự")
+    @Column(name = "MoTa", length = 300, nullable = false)
     private String moTa;
 
-    @Column(name = "Ngay")
+    @NotNull
+    @Column(name = "Ngay", nullable = false, updatable = false)
     private LocalDateTime ngay;
 
-    @Column(name = "Loai")
-    private String loai; // 'Vaccine', 'Benh', 'Kham'
+    @NotNull(message = "Loại lịch sử không được để trống")
+    @Enumerated(EnumType.STRING) // Đồng bộ với ENUM('Vaccine', 'Benh', 'Kham')
+    @Column(name = "Loai", nullable = false)
+    private LoaiLichSu loai;
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.ngay == null) {
+            this.ngay = LocalDateTime.now();
+        }
+    }
 }

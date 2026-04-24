@@ -1,6 +1,7 @@
 package com.cuahangthucung.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import java.time.LocalDateTime;
 
@@ -10,21 +11,25 @@ import java.time.LocalDateTime;
 public class PetImage {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "MaImg")
-    private String maImg;
+    private Integer maImg; // Khớp với INT AUTO_INCREMENT
 
-    @Column(name = "MaPet")
+    @NotBlank(message = "Mã thú cưng không được để trống")
+    @Column(name = "MaPet", length = 20, nullable = false)
     private String maPet;
 
-    @Column(name = "Url")
+    @NotBlank(message = "URL hình ảnh không được để trống")
+    @Column(name = "Url", length = 500, nullable = false)
     private String url;
 
-    @Column(name = "ThoiGianDangTai", insertable = false, updatable = false)
+    @Column(name = "ThoiGianDangTai", nullable = false, updatable = false)
     private LocalDateTime thoiGianDangTai;
 
-    // Nếu bạn muốn Java tự quản lý thời gian thay vì để DB tự tạo:
     @PrePersist
     protected void onCreate() {
-        this.thoiGianDangTai = LocalDateTime.now();
+        if (this.thoiGianDangTai == null) {
+            this.thoiGianDangTai = LocalDateTime.now();
+        }
     }
 }
