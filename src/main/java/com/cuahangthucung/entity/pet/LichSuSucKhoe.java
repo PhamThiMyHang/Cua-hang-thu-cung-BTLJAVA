@@ -1,4 +1,4 @@
-package com.cuahangthucung.entity;
+package com.cuahangthucung.entity.pet;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

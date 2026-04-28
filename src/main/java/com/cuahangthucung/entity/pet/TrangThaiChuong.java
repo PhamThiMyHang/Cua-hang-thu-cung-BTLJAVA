@@ -1,4 +1,4 @@
-package com.cuahangthucung.entity;
+package com.cuahangthucung.entity.pet;
 
 import lombok.Getter;
 
