@@ -1,6 +1,6 @@
-package com.cuahangthucung.user.entity;
+package com.cuahangthucung.entity.user.entity;
 
-import com.cuahangthucung.user.enums.LoaiKH;
+import com.cuahangthucung.entity.user.enums.LoaiKH;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

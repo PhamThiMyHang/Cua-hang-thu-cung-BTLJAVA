@@ -1,11 +1,13 @@
-package com.cuahangthucung.entity.pet;
+package com.cuahangthucung.entity.pet.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "PET")
@@ -45,8 +47,9 @@ public class Pet {
     private String tinhTrang;
 
 
-    @Column(name = "MaChuong", nullable = true)
-    private String maChuong;
+    @ManyToOne
+    @JoinColumn(name = "MaChuong") // Khớp với cột MaChuong trong SQL
+    private Chuong chuong;
 
 
     @NotBlank(message = "Mã khách hàng không được để trống")
@@ -73,4 +76,13 @@ public class Pet {
         }
     }
 
+    // QUAN HỆ: Một Pet có nhiều hình ảnh
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<PetImage> danhSachHinhAnh;
+
+    // QUAN HỆ: Một Pet có nhiều bản ghi sức khỏe
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<LichSuSucKhoe> lichSuSucKhoe;
 }

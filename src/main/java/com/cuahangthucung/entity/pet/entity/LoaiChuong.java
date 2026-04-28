@@ -1,12 +1,11 @@
-package com.cuahangthucung.entity.pet;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+package com.cuahangthucung.entity.pet.entity;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "LOAICHUONG")
@@ -31,4 +30,9 @@ public class LoaiChuong {
     @Min(value = 0, message = "So luong không được là số âm")
     @Column(name = "SoLuong", nullable = false)
     private Integer soLuong = 0;
+
+    // Định nghĩa: Một Loại chuồng có nhiều Chuồng cụ thể
+    @OneToMany(mappedBy = "loaiChuong", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude // Tránh vòng lặp vô hạn khi in log
+    private List<Chuong> danhSachChuong;
 }

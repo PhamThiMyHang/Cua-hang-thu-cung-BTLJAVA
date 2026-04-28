@@ -1,4 +1,4 @@
-package com.cuahangthucung.user.enums;
+package com.cuahangthucung.entity.user.enums;
 
 public enum LoaiKH {
     THUONG,

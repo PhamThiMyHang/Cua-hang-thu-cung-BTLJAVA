@@ -1,4 +1,4 @@
-package com.cuahangthucung.entity.pet;
+package com.cuahangthucung.entity.pet.enums;
 
 public enum LoaiLichSu {
     Vaccine,

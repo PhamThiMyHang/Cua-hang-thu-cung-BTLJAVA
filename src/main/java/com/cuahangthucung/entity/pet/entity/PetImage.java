@@ -1,8 +1,11 @@
-package com.cuahangthucung.entity.pet;
+package com.cuahangthucung.entity.pet.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,9 +18,11 @@ public class PetImage {
     @Column(name = "MaImg")
     private Integer maImg; // Khớp với INT AUTO_INCREMENT
 
-    @NotBlank(message = "Mã thú cưng không được để trống")
-    @Column(name = "MaPet", length = 20, nullable = false)
-    private String maPet;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MaPet", nullable = false)
+    @NotNull(message = "Thông tin thú cưng không được để trống")
+    @ToString.Exclude // Tránh vòng lặp vô hạn khi in log
+    private Pet pet;
 
     @NotBlank(message = "URL hình ảnh không được để trống")
     @Column(name = "Url", length = 500, nullable = false)

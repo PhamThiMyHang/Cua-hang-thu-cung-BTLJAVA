@@ -1,10 +1,13 @@
-package com.cuahangthucung.entity.pet;
+package com.cuahangthucung.entity.pet.entity;
 
+import com.cuahangthucung.entity.pet.enums.LoaiLichSu;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,9 +20,11 @@ public class LichSuSucKhoe {
     @Column(name = "MaLS")
     private Integer maLS;
 
-    @NotBlank(message = "Mã Pet không được để trống")
-    @Column(name = "MaPet", length = 20, nullable = false)
-    private String maPet;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MaPet", nullable = false)
+    @NotNull(message = "Thông tin thú cưng không được để trống")
+    @ToString.Exclude // Ngăn chặn vòng lặp vô hạn khi in log
+    private Pet pet;
 
     @NotBlank(message = "Mô tả sức khỏe không được để trống")
     @Size(max = 300, message = "Mô tả không được vượt quá 300 ký tự")

@@ -1,4 +1,4 @@
-package com.cuahangthucung.entity.pet;
+package com.cuahangthucung.entity.pet.enums;
 
 import lombok.Getter;
 

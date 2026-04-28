@@ -1,4 +1,4 @@
-package com.cuahangthucung.user.entity;
+package com.cuahangthucung.entity.user.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
