@@ -77,12 +77,12 @@ public class Pet {
     }
 
     // QUAN HỆ: Một Pet có nhiều hình ảnh
-    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "com/cuahangthucung/repository", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<PetImage> danhSachHinhAnh;
 
     // QUAN HỆ: Một Pet có nhiều bản ghi sức khỏe
-    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "com/cuahangthucung/repository", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<LichSuSucKhoe> lichSuSucKhoe;
 }
