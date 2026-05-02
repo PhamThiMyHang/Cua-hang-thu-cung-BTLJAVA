@@ -35,11 +35,10 @@ public class NhanVien {
     private ChucVu chucVu;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "UserID")
+    @JoinColumn(name = "UserID", unique = true)
     @ToString.Exclude
     private User user;
 
-    // Quan hệ ngược
     @OneToMany(mappedBy = "nhanVien", fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<ChamCong> danhSachChamCong;
