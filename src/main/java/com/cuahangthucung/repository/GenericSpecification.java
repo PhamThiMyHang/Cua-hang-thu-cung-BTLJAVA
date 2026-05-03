@@ -4,6 +4,8 @@ import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.Collection;
+
 public class GenericSpecification {
 
     /**
@@ -58,5 +60,12 @@ public class GenericSpecification {
         return (root, query, cb) -> isNull
                 ? cb.isNull(getPath(root, fieldName))
                 : cb.isNotNull(getPath(root, fieldName));
+    }
+    // 5. Tìm trong danh sách (IN) - MỚI: Rất cần cho các bộ lọc nhiều lựa chọn
+    public static <T> Specification<T> fieldIn(String fieldName, Collection<?> values) {
+        return (root, query, cb) -> {
+            if (values == null || values.isEmpty()) return null;
+            return getPath(root, fieldName).in(values);
+        };
     }
 }
