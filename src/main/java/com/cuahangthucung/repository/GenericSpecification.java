@@ -68,4 +68,5 @@ public class GenericSpecification {
             return getPath(root, fieldName).in(values);
         };
     }
+
 }
