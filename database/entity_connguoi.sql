@@ -11,7 +11,7 @@ USE cuahangthucung;
 -- USERS: tài khoản đăng nhập
 -- ================================
 CREATE TABLE IF NOT EXISTS USERS (
-    UserID INT AUTO_INCREMENT PRIMARY KEY,         -- mã người dùng
+    UserID INT AUTO_INCREMENT PRIMARY KEY,         -- mã người   dùng
     Username VARCHAR(50) NOT NULL UNIQUE,          -- tên đăng nhập
     Password VARCHAR(255) NOT NULL,                -- mật khẩu
     Status ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE'
