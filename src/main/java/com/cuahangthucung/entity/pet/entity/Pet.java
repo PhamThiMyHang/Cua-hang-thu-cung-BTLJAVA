@@ -52,13 +52,13 @@ public class Pet {
     private Chuong chuong;
 
 
-    @NotBlank(message = "Mã khách hàng không được để trống")
+    // Khóa ngoại MaKH (Kiểu INT theo SQL 3/5/2026)
     @Column(name = "MaKH", nullable = false)
-    private String maKH;
+    private Integer maKH;
 
-    @NotBlank(message = "Mã nhân viên không được để trống")
+    // Khóa ngoại MaNV (Kiểu INT theo SQL 3/5/2026)
     @Column(name = "MaNV", nullable = false)
-    private String maNV;
+    private Integer maNV;
 
     /*Bổ sung thêm 2 cột là: NgayGui, NgayTra, NgayGui lấy từ hệ thống ngày nhập, ko để trống, NgayTrả có thể không nhập */
 
