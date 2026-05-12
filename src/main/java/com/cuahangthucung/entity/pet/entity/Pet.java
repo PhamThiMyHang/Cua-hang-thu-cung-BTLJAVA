@@ -1,5 +1,6 @@
 package com.cuahangthucung.entity.pet.entity;
 
+import com.cuahangthucung.entity.pet.enums.TinhTrangPet;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -43,9 +44,9 @@ public class Pet {
     @Column(name = "CanNang", nullable = false)
     private Float canNang = 0.0f;
 
-    @Column(name = "TinhTrang", nullable = true)
-    private String tinhTrang;
-
+    @Enumerated(EnumType.STRING) // Quan trọng: Để JPA lưu chữ BINH_THUONG vào DB
+    @Column(name = "TinhTrang")
+    private TinhTrangPet tinhTrang;
 
     @ManyToOne
     @JoinColumn(name = "MaChuong") // Khớp với cột MaChuong trong SQL
@@ -77,12 +78,12 @@ public class Pet {
     }
 
     // QUAN HỆ: Một Pet có nhiều hình ảnh
-    @OneToMany(mappedBy = "com/cuahangthucung/repository", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<PetImage> danhSachHinhAnh;
 
     // QUAN HỆ: Một Pet có nhiều bản ghi sức khỏe
-    @OneToMany(mappedBy = "com/cuahangthucung/repository", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<LichSuSucKhoe> lichSuSucKhoe;
 }
