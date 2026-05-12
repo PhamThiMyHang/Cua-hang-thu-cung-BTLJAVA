@@ -1,6 +1,5 @@
 package com.cuahangthucung.entity.user.entity;
 
-import com.cuahangthucung.entity.user.enums.Role;
 import com.cuahangthucung.entity.user.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -35,6 +34,7 @@ public class User {
     @Column(name = "Status", nullable = false)
     private UserStatus status = UserStatus.ACTIVE;
 
+    // ==================== SỬA Ở ĐÂY ====================
     @NotNull(message = "Vai trò không được để trống")
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
