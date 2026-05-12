@@ -20,7 +20,7 @@ public class ChamCong {
 
     @NotNull(message = "Nhân viên không được để trống")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MaNV", nullable = false)
+    @JoinColumn(name = "MaNV", nullable = false)   // Đã sửa
     @ToString.Exclude
     private NhanVien nhanVien;
 

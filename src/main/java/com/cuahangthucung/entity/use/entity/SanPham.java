@@ -24,4 +24,3 @@ public class SanPham {
     @JoinColumn(name = "maNCC")
     private NhaCungCap nhaCungCap;
 }
-

@@ -16,4 +16,3 @@ public class DichVu {
 
     private String moTa;
 }
-
