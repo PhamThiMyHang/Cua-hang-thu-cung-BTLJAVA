@@ -54,5 +54,6 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @ToString.Exclude
+
     private List<LichSuDangNhap> lichSuDangNhap;
 }

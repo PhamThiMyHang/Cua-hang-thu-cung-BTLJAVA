@@ -21,6 +21,6 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer>, Jp
 
     boolean existsBySdt(String sdt);
 
-    @Query("SELECT n FROM NhanVien n WHERE n.maNV LIKE :prefix% ORDER BY n.maNV DESC LIMIT 1")
-    Optional<NhanVien> findLastNhanVienByPrefix(@Param("prefix") String prefix);
+    @Query("SELECT n FROM NhanVien n ORDER BY n.maNV DESC LIMIT 1")
+    Optional<NhanVien> findLastNhanVien();
 }

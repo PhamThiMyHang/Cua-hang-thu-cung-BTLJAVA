@@ -1,6 +1,7 @@
 package com.cuahangthucung.entity.pet.entity;
 
 import com.cuahangthucung.entity.pet.enums.TinhTrangPet;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -80,10 +81,12 @@ public class Pet {
     // QUAN HỆ: Một Pet có nhiều hình ảnh
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @JsonIgnore
     private List<PetImage> danhSachHinhAnh;
 
     // QUAN HỆ: Một Pet có nhiều bản ghi sức khỏe
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @JsonIgnore
     private List<LichSuSucKhoe> lichSuSucKhoe;
 }

@@ -1,6 +1,7 @@
 package com.cuahangthucung.entity.pet.entity;
 
 import com.cuahangthucung.entity.pet.enums.TrangThaiChuong;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -36,5 +37,6 @@ public class Chuong {
     */
     @OneToMany(mappedBy = "chuong", fetch = FetchType.LAZY)
     @ToString.Exclude // Tránh vòng lặp vô hạn khi log/print dữ liệu
+    @JsonIgnore
     private List<Pet> danhSachPet;
 }

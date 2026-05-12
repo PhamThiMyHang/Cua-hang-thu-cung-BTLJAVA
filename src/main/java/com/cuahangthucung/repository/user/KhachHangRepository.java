@@ -21,6 +21,6 @@ public interface KhachHangRepository extends JpaRepository<KhachHang, Integer>, 
 
     boolean existsBySdt(String sdt);
 
-    @Query("SELECT k FROM KhachHang k WHERE k.maKH LIKE :prefix% ORDER BY k.maKH DESC LIMIT 1")
-    Optional<KhachHang> findLastKhachHangByPrefix(@Param("prefix") String prefix);
+    @Query("SELECT k FROM KhachHang k ORDER BY k.maKH DESC LIMIT 1")
+    Optional<KhachHang> findLastKhachHang();
 }
