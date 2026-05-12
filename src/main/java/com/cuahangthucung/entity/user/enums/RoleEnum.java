@@ -1,6 +1,6 @@
 package com.cuahangthucung.entity.user.enums;
 
-public enum Role {
+public enum RoleEnum {
     ADMIN,
     STAFF,
     KTV,
