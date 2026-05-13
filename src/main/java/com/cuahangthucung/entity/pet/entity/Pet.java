@@ -1,5 +1,7 @@
 package com.cuahangthucung.entity.pet.entity;
 
+import com.cuahangthucung.entity.pet.enums.TinhTrangPet;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -43,22 +45,22 @@ public class Pet {
     @Column(name = "CanNang", nullable = false)
     private Float canNang = 0.0f;
 
-    @Column(name = "TinhTrang", nullable = true)
-    private String tinhTrang;
-
+    @Enumerated(EnumType.STRING) // Quan trọng: Để JPA lưu chữ BINH_THUONG vào DB
+    @Column(name = "TinhTrang")
+    private TinhTrangPet tinhTrang;
 
     @ManyToOne
     @JoinColumn(name = "MaChuong") // Khớp với cột MaChuong trong SQL
     private Chuong chuong;
 
 
-    @NotBlank(message = "Mã khách hàng không được để trống")
+    // Khóa ngoại MaKH (Kiểu INT theo SQL 3/5/2026)
     @Column(name = "MaKH", nullable = false)
-    private String maKH;
+    private Integer maKH;
 
-    @NotBlank(message = "Mã nhân viên không được để trống")
+    // Khóa ngoại MaNV (Kiểu INT theo SQL 3/5/2026)
     @Column(name = "MaNV", nullable = false)
-    private String maNV;
+    private Integer maNV;
 
     /*Bổ sung thêm 2 cột là: NgayGui, NgayTra, NgayGui lấy từ hệ thống ngày nhập, ko để trống, NgayTrả có thể không nhập */
 
@@ -77,12 +79,23 @@ public class Pet {
     }
 
     // QUAN HỆ: Một Pet có nhiều hình ảnh
-    @OneToMany(mappedBy = "com/cuahangthucung/repository", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @JsonIgnore
     private List<PetImage> danhSachHinhAnh;
 
     // QUAN HỆ: Một Pet có nhiều bản ghi sức khỏe
-    @OneToMany(mappedBy = "com/cuahangthucung/repository", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @JsonIgnore
     private List<LichSuSucKhoe> lichSuSucKhoe;
+
+	public String getMaPet() {
+		return maPet;
+	}
+
+	public void setMaPet(String maPet) {
+		this.maPet = maPet;
+	}
+    
 }

@@ -40,4 +40,13 @@ public class KhachHang {
     @JoinColumn(name = "UserID")
     @ToString.Exclude
     private User user;
+
+	public Integer getMaKH() {
+		return maKH;
+	}
+
+	public void setMaKH(Integer maKH) {
+		this.maKH = maKH;
+	}
+    
 }

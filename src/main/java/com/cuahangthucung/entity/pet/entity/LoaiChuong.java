@@ -1,4 +1,5 @@
 package com.cuahangthucung.entity.pet.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -34,5 +35,6 @@ public class LoaiChuong {
     // Định nghĩa: Một Loại chuồng có nhiều Chuồng cụ thể
     @OneToMany(mappedBy = "loaiChuong", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude // Tránh vòng lặp vô hạn khi in log
+    @JsonIgnore
     private List<Chuong> danhSachChuong;
 }
