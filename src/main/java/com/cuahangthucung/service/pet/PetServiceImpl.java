@@ -1,5 +1,6 @@
 package com.cuahangthucung.service.pet;
 
+
 import com.cuahangthucung.dto.pet.*;
 import com.cuahangthucung.entity.pet.entity.Pet;
 import com.cuahangthucung.repository.pet.PetRepository;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Service
 public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> implements PetService {
@@ -127,5 +129,6 @@ public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> 
         // Kiểm tra xem có bản ghi nào loại "Benh" mà mô tả có từ khóa cảnh báo không
         return pet.getLichSuSucKhoe().stream()
                 .anyMatch(ls -> ls.getLoai().name().equals("Benh"));
+
     }
 }

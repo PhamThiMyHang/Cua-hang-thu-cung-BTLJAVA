@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Service
 public class LoaiChuongServiceImpl extends BaseServiceImpl<LoaiChuong, String, LoaiChuongRepository>
         implements LoaiChuongService {
@@ -91,4 +92,5 @@ public class LoaiChuongServiceImpl extends BaseServiceImpl<LoaiChuong, String, L
 
         return dto;
     }
+
 }

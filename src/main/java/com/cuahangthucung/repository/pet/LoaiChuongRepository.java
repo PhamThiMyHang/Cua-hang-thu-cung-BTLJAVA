@@ -23,4 +23,5 @@ public interface LoaiChuongRepository extends JpaRepository<LoaiChuong, String>,
     // 3. Tìm tên loại chuồng có số lượng thiết kế lớn nhất
     @Query(value = "SELECT TenLoai FROM LOAICHUONG ORDER BY SoLuong DESC LIMIT 1", nativeQuery = true)
     Optional<String> getNameOfMostPopularType();
+
 }

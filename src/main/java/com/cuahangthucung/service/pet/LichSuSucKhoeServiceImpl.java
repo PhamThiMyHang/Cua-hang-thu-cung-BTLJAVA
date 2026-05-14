@@ -1,5 +1,6 @@
 package com.cuahangthucung.service.pet;
 
+<<<<<<< HEAD
 import com.cuahangthucung.dto.pet.LichSuSearchRequest;
 import com.cuahangthucung.dto.pet.LichSuSucKhoeDTO;
 import com.cuahangthucung.dto.pet.LichSuSucKhoeRequest;
@@ -14,10 +15,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+=======
+import com.cuahangthucung.entity.pet.entity.LichSuSucKhoe;
+import com.cuahangthucung.repository.pet.LichSuSucKhoeRepository;
+import com.cuahangthucung.service.base.BaseServiceImpl;
+import org.springframework.stereotype.Service;
+>>>>>>> DoanThiNgocGiau
 
 @Service
 public class LichSuSucKhoeServiceImpl extends BaseServiceImpl<LichSuSucKhoe, Integer, LichSuSucKhoeRepository>
         implements LichSuSucKhoeService {
+<<<<<<< HEAD
 
     private final PetRepository petRepository;
 
@@ -100,4 +108,7 @@ public class LichSuSucKhoeServiceImpl extends BaseServiceImpl<LichSuSucKhoe, Int
 
         return dto;
     }
+=======
+    public LichSuSucKhoeServiceImpl(LichSuSucKhoeRepository repository) { super(repository); }
+>>>>>>> DoanThiNgocGiau
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+
 @Repository
 public interface ChuongRepository extends JpaRepository<Chuong, String>, JpaSpecificationExecutor<Chuong> {
     // Tất cả các chức năng tìm kiếm (1, 2, 3) và tính toán (4, 5)
@@ -27,4 +28,5 @@ public interface ChuongRepository extends JpaRepository<Chuong, String>, JpaSpec
     // 3. (Tùy chọn) Tìm các chuồng còn trống thuộc một loại cụ thể
     @Query("SELECT c FROM Chuong c WHERE c.trangThai = 'TRONG' AND c.loaiChuong.maLoaiChuong = :maLoai")
     List<Chuong> findAvailableByLoai(@Param("maLoai") String maLoai);
+
 }

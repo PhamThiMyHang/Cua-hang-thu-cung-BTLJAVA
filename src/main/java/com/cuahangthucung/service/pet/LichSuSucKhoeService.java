@@ -17,3 +17,4 @@ public interface LichSuSucKhoeService extends BaseService<LichSuSucKhoe, Integer
     long countByRequest(LichSuSearchRequest request);
 
 }
+

@@ -19,3 +19,4 @@ public interface LoaiChuongService extends BaseService<LoaiChuong, String> {
     // Lấy thống kê tổng hợp cho Dashboard
     LoaiChuongSummaryDTO getSummary();
 }
+

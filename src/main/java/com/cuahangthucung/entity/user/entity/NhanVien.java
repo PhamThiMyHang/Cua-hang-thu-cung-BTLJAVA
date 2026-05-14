@@ -50,4 +50,13 @@ public class NhanVien {
     @OneToMany(mappedBy = "nhanVien", fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<KPIThuongPhat> danhSachKPI;
+
+	public Integer getMaNV() {
+		return maNV;
+	}
+
+	public void setMaNV(Integer maNV) {
+		this.maNV = maNV;
+	}
+    
 }

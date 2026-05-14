@@ -19,3 +19,4 @@ public interface PetImageService extends BaseService<PetImage, Integer> {
     // 2, 3, 5. Lấy các số liệu count và tổng hợp
     PetImageSummaryDTO getSummary(PetImageSearchRequest request);
 }
+

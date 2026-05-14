@@ -1,5 +1,4 @@
 package com.cuahangthucung.service.pet;
-
 import com.cuahangthucung.dto.pet.*; // Import đúng package DTO của Chuong
 import com.cuahangthucung.dto.pet.ChuongDTO;
 import com.cuahangthucung.dto.pet.ChuongRequest;
@@ -23,3 +22,4 @@ public interface ChuongService extends BaseService<Chuong, String> {
     ChuongSummaryDTO getSummary();
     List<ChuongDTO> findAllDTO();
 }
+
