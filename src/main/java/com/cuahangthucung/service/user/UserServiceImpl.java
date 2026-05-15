@@ -6,6 +6,8 @@ import com.cuahangthucung.repository.user.UserRepository;
 import com.cuahangthucung.repository.user.UserSpecification;
 import com.cuahangthucung.service.base.BaseServiceImpl;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,19 +30,25 @@ public class UserServiceImpl extends BaseServiceImpl<User, Integer, UserReposito
     }
 
     @Override
+    public Page<UserDTO> search(UserSearchRequest request, Pageable pageable) {
+        return repository.findAll(UserSpecification.getFilter(request), pageable)
+                .map(this::convertToDTO);
+    }
+
+    @Override
     @Transactional
     public UserDTO saveRequest(UserRequest request) {
         User user = (request.getUserID() != null)
                 ? repository.findById(request.getUserID()).orElse(new User())
                 : new User();
 
-        BeanUtils.copyProperties(request, user);
+        // Copy properties nhưng bỏ qua roles để xử lý riêng
+        BeanUtils.copyProperties(request, user, "roles");
 
-        // Xử lý roles (nếu có logic RoleRepository thì inject thêm)
-        if (request.getRoleNames() != null) {
-            // Logic gán Role sẽ được xử lý chi tiết hơn ở tầng cao hơn hoặc mapper
+        // TODO: Xử lý gán Role sau (cần inject RoleService)
+        if (request.getRoleNames() != null && !request.getRoleNames().isEmpty()) {
             user.getRoles().clear();
-            // TODO: Map roleName sang Role entity nếu cần
+            // Logic map roleName → Role entity sẽ được bổ sung sau
         }
 
         return convertToDTO(repository.save(user));
@@ -84,7 +92,6 @@ public class UserServiceImpl extends BaseServiceImpl<User, Integer, UserReposito
             dto.setStatus(entity.getStatus().name());
         }
 
-        // Lấy tên role
         if (entity.getRoles() != null) {
             dto.setRoles(entity.getRoles().stream()
                     .map(role -> role.getRoleName())

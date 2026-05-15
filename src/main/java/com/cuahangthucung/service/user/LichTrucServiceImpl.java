@@ -6,6 +6,8 @@ import com.cuahangthucung.repository.user.LichTrucRepository;
 import com.cuahangthucung.repository.user.LichTrucSpecification;
 import com.cuahangthucung.service.base.BaseServiceImpl;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class LichTrucServiceImpl extends BaseServiceImpl<LichTruc, Integer, LichTrucRepository> implements LichTrucService {
+public class LichTrucServiceImpl extends BaseServiceImpl<LichTruc, Integer, LichTrucRepository> 
+        implements LichTrucService {
 
     public LichTrucServiceImpl(LichTrucRepository repository) {
         super(repository);
@@ -25,6 +28,12 @@ public class LichTrucServiceImpl extends BaseServiceImpl<LichTruc, Integer, Lich
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<LichTrucDTO> search(LichTrucSearchRequest request, Pageable pageable) {
+        return repository.findAll(LichTrucSpecification.getFilter(request), pageable)
+                .map(this::convertToDTO);
     }
 
     @Override
@@ -40,7 +49,7 @@ public class LichTrucServiceImpl extends BaseServiceImpl<LichTruc, Integer, Lich
                 ? repository.findById(request.getId()).orElse(new LichTruc())
                 : new LichTruc();
 
-        BeanUtils.copyProperties(request, lichTruc);
+        BeanUtils.copyProperties(request, lichTruc, "nhanVien"); // ignore quan hệ
         return convertToDTO(repository.save(lichTruc));
     }
 

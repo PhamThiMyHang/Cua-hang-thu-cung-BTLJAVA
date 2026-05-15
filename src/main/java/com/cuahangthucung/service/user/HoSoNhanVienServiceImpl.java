@@ -6,6 +6,8 @@ import com.cuahangthucung.repository.user.HoSoNhanVienRepository;
 import com.cuahangthucung.repository.user.HoSoNhanVienSpecification;
 import com.cuahangthucung.service.base.BaseServiceImpl;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class HoSoNhanVienServiceImpl extends BaseServiceImpl<HoSoNhanVien, Integer, HoSoNhanVienRepository> implements HoSoNhanVienService {
+public class HoSoNhanVienServiceImpl extends BaseServiceImpl<HoSoNhanVien, Integer, HoSoNhanVienRepository> 
+        implements HoSoNhanVienService {
 
     public HoSoNhanVienServiceImpl(HoSoNhanVienRepository repository) {
         super(repository);
@@ -28,13 +31,19 @@ public class HoSoNhanVienServiceImpl extends BaseServiceImpl<HoSoNhanVien, Integ
     }
 
     @Override
+    public Page<HoSoNhanVienDTO> search(HoSoNhanVienSearchRequest request, Pageable pageable) {
+        return repository.findAll(HoSoNhanVienSpecification.getFilter(request), pageable)
+                .map(this::convertToDTO);
+    }
+
+    @Override
     @Transactional
     public HoSoNhanVienDTO saveRequest(HoSoNhanVienRequest request) {
         HoSoNhanVien hs = (request.getMaHoSo() != null)
                 ? repository.findById(request.getMaHoSo()).orElse(new HoSoNhanVien())
                 : new HoSoNhanVien();
 
-        BeanUtils.copyProperties(request, hs);
+        BeanUtils.copyProperties(request, hs, "nhanVien"); // ignore quan hệ
         return convertToDTO(repository.save(hs));
     }
 
@@ -52,6 +61,13 @@ public class HoSoNhanVienServiceImpl extends BaseServiceImpl<HoSoNhanVien, Integ
                 : null;
     }
 
+    @Override
+    public List<HoSoNhanVienDTO> findAllDTO() {
+        return repository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     private HoSoNhanVienDTO convertToDTO(HoSoNhanVien entity) {
         HoSoNhanVienDTO dto = new HoSoNhanVienDTO();
         BeanUtils.copyProperties(entity, dto);
@@ -61,11 +77,5 @@ public class HoSoNhanVienServiceImpl extends BaseServiceImpl<HoSoNhanVien, Integ
             dto.setTenNV(entity.getNhanVien().getTenNV());
         }
         return dto;
-    }
-    @Override
-    public List<HoSoNhanVienDTO> findAllDTO() {
-        return repository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
     }
 }

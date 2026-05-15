@@ -3,6 +3,10 @@ package com.cuahangthucung.controller.user;
 import com.cuahangthucung.controller.base.BaseController;
 import com.cuahangthucung.entity.user.entity.Role;
 import com.cuahangthucung.service.user.RoleService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,11 +18,9 @@ import java.util.Map;
  * =============================================
  * Quản lý Vai trò (Role) trong hệ thống
  * Hỗ trợ phân quyền: ADMIN, STAFF, KTV, CUSTOMER
- * Đây là bảng quan trọng cho hệ thống phân quyền
  */
 @RestController
 @RequestMapping("/api/roles")
-
 public class RoleController extends BaseController {
 
     private final RoleService roleService;
@@ -28,17 +30,16 @@ public class RoleController extends BaseController {
     }
 
     /**
-     * Lấy tất cả các vai trò hiện có trong hệ thống
+     * LẤY TẤT CẢ VAI TRÒ (có hỗ trợ phân trang)
      */
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getAll() {
-        var roles = roleService.findAll();
+    public ResponseEntity<Map<String, Object>> getAll(
+            @PageableDefault(size = 20, sort = "roleID", direction = Sort.Direction.ASC) Pageable pageable
+    ) {
+        Page<Role> roles = roleService.findAll(pageable);  // Sử dụng phương thức từ BaseService
         return resSuccess(roles, "Lấy danh sách vai trò thành công");
     }
 
-    /**
-     * Lấy thông tin một vai trò theo ID
-     */
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getById(@PathVariable Integer id) {
         return roleService.findById(id)
@@ -47,7 +48,7 @@ public class RoleController extends BaseController {
     }
 
     /**
-     * Tìm vai trò theo tên (ví dụ: ADMIN, STAFF, KTV...)
+     * Tìm vai trò theo tên (ADMIN, STAFF, KTV, CUSTOMER...)
      */
     @GetMapping("/name/{roleName}")
     public ResponseEntity<Map<String, Object>> getByRoleName(@PathVariable String roleName) {
@@ -56,20 +57,12 @@ public class RoleController extends BaseController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    /**
-     * Thêm mới một vai trò
-     * Thường chỉ dùng bởi Admin
-     */
     @PostMapping
     public ResponseEntity<Map<String, Object>> create(@RequestBody Role role) {
         Role saved = roleService.save(role);
         return resCreated(saved, "Thêm vai trò mới thành công");
     }
 
-    /**
-     * Xóa một vai trò
-     * Cần cẩn thận vì có thể ảnh hưởng đến User
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Integer id) {
         roleService.deleteById(id);
