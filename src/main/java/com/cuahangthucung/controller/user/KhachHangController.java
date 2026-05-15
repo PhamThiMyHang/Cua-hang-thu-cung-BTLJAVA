@@ -62,4 +62,5 @@ public class KhachHangController extends BaseController {
         khachHangService.deleteById(id);
         return resSuccess(null, "Xóa khách hàng thành công");
     }
+    //loc những người thuộc vào 1 thành phố
 }

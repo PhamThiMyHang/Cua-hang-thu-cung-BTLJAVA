@@ -1,7 +1,7 @@
 package com.cuahangthucung.controller.pet;
 
 import com.cuahangthucung.controller.base.BaseController;
-<<<<<<< HEAD
+
 import com.cuahangthucung.dto.pet.*; // Đảm bảo import đúng package DTO của Chuong
 import com.cuahangthucung.dto.pet.ChuongSummaryDTO;
 import com.cuahangthucung.service.pet.ChuongService;
@@ -10,19 +10,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-=======
+//
 import com.cuahangthucung.service.pet.ChuongService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
->>>>>>> DoanThiNgocGiau
+//DoanThiNgocGiau
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/chuong")
-<<<<<<< HEAD
+
 @CrossOrigin("*")
 public class ChuongController extends BaseController {
 
@@ -98,14 +98,6 @@ public class ChuongController extends BaseController {
     public ResponseEntity<Map<String, Object>> getSummary() {
         ChuongSummaryDTO summary = chuongService.getSummary();
         return resSuccess(summary, "Lấy số liệu thống kê chuồng thành công");
-=======
-public class ChuongController extends BaseController {
-    private final ChuongService chuongService;
-    public ChuongController(ChuongService chuongService) { this.chuongService = chuongService; }
 
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> getAll() {
-        return resSuccess(chuongService.findAll(), "Lấy danh sách chuồng thành công");
->>>>>>> DoanThiNgocGiau
     }
 }

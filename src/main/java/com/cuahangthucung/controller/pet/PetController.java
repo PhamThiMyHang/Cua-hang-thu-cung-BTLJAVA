@@ -1,21 +1,21 @@
 package com.cuahangthucung.controller.pet;
 
-<<<<<<< HEAD
+
 import com.cuahangthucung.dto.pet.*;
 import com.cuahangthucung.service.pet.PetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-=======
+
 import com.cuahangthucung.controller.base.BaseController;
 import com.cuahangthucung.entity.pet.entity.Pet;
 import com.cuahangthucung.service.pet.PetService;
->>>>>>> DoanThiNgocGiau
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-<<<<<<< HEAD
+
 
 @RestController
 @RequestMapping("/api/pets")
@@ -88,6 +88,8 @@ public class PetController {
     @GetMapping("/next-id")
     public ResponseEntity<String> getNextMaPet() {
         return ResponseEntity.ok(petService.generateNextMaPet());
+    }
+        /*
 =======
 import java.util.Map;
 
@@ -132,5 +134,5 @@ public class PetController extends BaseController {
         petService.deleteById(id);
         return resSuccess(null, "Xóa thú cưng thành công");
 >>>>>>> DoanThiNgocGiau
-    }
+    */
 }

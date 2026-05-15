@@ -23,4 +23,9 @@ public interface KhachHangRepository extends JpaRepository<KhachHang, Integer>, 
 
     @Query("SELECT k FROM KhachHang k ORDER BY k.maKH DESC LIMIT 1")
     Optional<KhachHang> findLastKhachHang();
+
+    /*  Pham Thi My Hang sua0*/
+    // KhachHangRepository.java
+    @Query("SELECT k FROM KhachHang k WHERE k.maKH_String LIKE :prefix% ORDER BY k.maKH_String DESC LIMIT 1")
+    Optional<KhachHang> findLastKhachHangByPrefix(@Param("prefix") String prefix);
 }

@@ -1,7 +1,7 @@
 package com.cuahangthucung.controller.pet;
 
 import com.cuahangthucung.controller.base.BaseController;
-<<<<<<< HEAD
+
 import com.cuahangthucung.dto.pet.*; // Hoặc dto.pet.* tùy cấu trúc folder của bạn
 import com.cuahangthucung.dto.pet.LoaiChuongRequest;
 import com.cuahangthucung.service.pet.LoaiChuongService;
@@ -10,13 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-=======
+
 import com.cuahangthucung.entity.pet.entity.LoaiChuong;
-import com.cuahangthucung.service.pet.LoaiChuongService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
->>>>>>> DoanThiNgocGiau
+
 import java.util.Map;
 
 @RestController
@@ -30,7 +28,7 @@ public class LoaiChuongController extends BaseController {
         this.loaiChuongService = loaiChuongService;
     }
 
-<<<<<<< HEAD
+
     /**
      * 1. Lọc động danh mục loại chuồng
      */
@@ -82,24 +80,13 @@ public class LoaiChuongController extends BaseController {
     /**
      * 6. Xóa
      */
-=======
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> getAll() {
-        return resSuccess(loaiChuongService.findAll(), "Lấy danh sách loại chuồng thành công");
-    }
 
-    @PostMapping
-    public ResponseEntity<Map<String, Object>> create(@RequestBody LoaiChuong loaiChuong) {
-        return resCreated(loaiChuongService.save(loaiChuong), "Thêm loại chuồng thành công");
-    }
-
->>>>>>> DoanThiNgocGiau
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable String id) {
         loaiChuongService.deleteById(id);
         return resSuccess(null, "Xóa loại chuồng thành công");
     }
-<<<<<<< HEAD
+
 
     /**
      * 7. Thống kê loại chuồng cho Dashboard
@@ -109,6 +96,5 @@ public class LoaiChuongController extends BaseController {
         LoaiChuongSummaryDTO summary = loaiChuongService.getSummary();
         return resSuccess(summary, "Lấy thống kê loại chuồng thành công");
     }
-=======
->>>>>>> DoanThiNgocGiau
+
 }
