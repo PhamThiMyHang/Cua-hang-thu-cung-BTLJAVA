@@ -1,8 +1,11 @@
+
 package com.cuahangthucung.controller.pet;
+
 
 import com.cuahangthucung.controller.base.BaseController;
 
 import com.cuahangthucung.dto.pet.*;
+
 import com.cuahangthucung.service.pet.PetImageService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +14,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import com.cuahangthucung.entity.pet.entity.PetImage;
+
 import com.cuahangthucung.service.pet.PetImageService;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import com.cuahangthucung.entity.pet.entity.PetImage;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 
 import java.util.Map;
 
@@ -33,9 +49,18 @@ public class PetImageController extends BaseController {
      * Hỗ trợ lọc theo: maImg, maPet, ngayCuThe
      */
     @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> search(PetImageSearchRequest request) {
-        List<PetImageDTO> list = petImageService.search(request);
-        return resSuccess(list, "Tìm kiếm danh sách hình ảnh thành công");
+    public ResponseEntity<Page<PetImageDTO>> search(
+            PetImageSearchRequest request,
+            @PageableDefault(sort = "maImg", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        // Sử dụng Specification để lọc
+        var spec = com.cuahangthucung.repository.pet.PetImageSpecification.getFilter(request);
+
+        // Gọi hàm findAll hỗ trợ phân trang từ BaseService
+        Page<PetImage> resultPage = petImageService.findAll(spec, pageable);
+
+        // Chuyển đổi sang DTO thông qua Method Reference (Yêu cầu convertToDTO phải là public)
+        return ResponseEntity.ok(resultPage.map(petImageService::convertToDTO));
     }
 
     /**
@@ -95,14 +120,5 @@ public class PetImageController extends BaseController {
         PetImageSummaryDTO summary = petImageService.getSummary(request);
         return resSuccess(summary, "Lấy thống kê hình ảnh thành công");
     }
-    @PostMapping
-    public ResponseEntity<Map<String, Object>> addImage(@RequestBody PetImage petImage) {
-        return resCreated(petImageService.save(petImage), "Lưu hình ảnh thành công");
-    }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> deleteImage(@PathVariable Integer id) {
-        petImageService.deleteById(id);
-        return resSuccess(null, "Xóa hình ảnh thành công");
-    }
 }

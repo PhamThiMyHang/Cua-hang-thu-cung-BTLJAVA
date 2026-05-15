@@ -29,4 +29,9 @@ public interface ChuongRepository extends JpaRepository<Chuong, String>, JpaSpec
     @Query("SELECT c FROM Chuong c WHERE c.trangThai = 'TRONG' AND c.loaiChuong.maLoaiChuong = :maLoai")
     List<Chuong> findAvailableByLoai(@Param("maLoai") String maLoai);
 
+
+    @Query("SELECT MAX(c.maChuong) FROM Chuong c")
+    String findMaxMaChuong();
+
+
 }

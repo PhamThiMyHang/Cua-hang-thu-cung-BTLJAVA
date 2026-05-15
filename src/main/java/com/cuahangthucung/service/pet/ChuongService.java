@@ -21,5 +21,6 @@ public interface ChuongService extends BaseService<Chuong, String> {
     // Lấy thống kê tổng hợp
     ChuongSummaryDTO getSummary();
     List<ChuongDTO> findAllDTO();
+    ChuongDTO convertToDTO(Chuong chuong);
 }
 

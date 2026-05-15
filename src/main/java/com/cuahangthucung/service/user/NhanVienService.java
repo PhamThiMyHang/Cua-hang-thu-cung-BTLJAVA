@@ -11,4 +11,6 @@ public interface NhanVienService extends BaseService<NhanVien, Integer> {
     NhanVienDTO findByIdDTO(Integer id);
     List<NhanVienDTO> findAllDTO();
     NhanVienSummaryDTO getSummary();
+    /*Bổ sung*/
+    String generateNextMaNV();
 }

@@ -7,10 +7,19 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface NhanVienRepository extends JpaRepository<NhanVien, Integer>, JpaSpecificationExecutor<NhanVien> {
 
     boolean existsBySdt(String sdt);
+    // Lấy nhân viên có ID lớn nhất
+    @Query("SELECT n FROM NhanVien n ORDER BY n.maNV DESC LIMIT 1")
+    Optional<NhanVien> findLastNhanVien();
+/*
+    @Query("SELECT n FROM NhanVien n ORDER BY n.maNV DESC LIMIT 1")
+    Optional<NhanVien> findLastNhanVien();
+ */
 
     @Query("SELECT COUNT(n) FROM NhanVien n")
     Long countTotalNhanVien();

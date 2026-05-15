@@ -11,4 +11,5 @@ public interface KhachHangService extends BaseService<KhachHang, Integer> {
     KhachHangDTO findByIdDTO(Integer id);
     List<KhachHangDTO> findAllDTO();
     KhachHangSummaryDTO getSummary();
+    String generateNextMaKH();
 }

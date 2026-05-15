@@ -15,4 +15,7 @@ public class PetImageSearchRequest {
     // Phục vụ yêu cầu: Tìm trong một khoảng thời gian (Nếu cần)
     private LocalDateTime tuNgay;
     private LocalDateTime denNgay;
+
+    private String tenPet;
+
 }

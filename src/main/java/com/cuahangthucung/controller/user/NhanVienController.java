@@ -2,6 +2,7 @@ package com.cuahangthucung.controller.user;
 
 import com.cuahangthucung.controller.base.BaseController;
 import com.cuahangthucung.dto.user.*;
+import com.cuahangthucung.entity.user.entity.NhanVien;
 import com.cuahangthucung.service.user.NhanVienService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -38,11 +39,18 @@ public class NhanVienController extends BaseController {
         NhanVienDTO dto = nhanVienService.findByIdDTO(id);
         return resSuccess(dto, "Tìm thấy nhân viên");
     }
-
+/* bỏ
     @PostMapping
     public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody NhanVienRequest request) {
         NhanVienDTO saved = nhanVienService.saveRequest(request);
         return resCreated(saved, "Thêm nhân viên thành công");
+    }
+*/
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> create(@RequestBody NhanVien nhanVien) {
+        // KHÔNG cần set MaNV thủ công, DB sẽ tự tăng
+        NhanVien saved = nhanVienService.save(nhanVien);
+        return resCreated(saved, "Thêm nhân viên thành công với ID: " + saved.getMaNV());
     }
 
     @PutMapping("/{id}")

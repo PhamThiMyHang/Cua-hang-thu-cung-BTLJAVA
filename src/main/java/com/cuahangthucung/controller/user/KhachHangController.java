@@ -59,9 +59,13 @@ public class KhachHangController extends BaseController {
         return resSuccess(null, "Xóa khách hàng thành công");
     }
 
+    //loc những người thuộc vào 1 thành phố
+
+
     @GetMapping("/summary")
     public ResponseEntity<Map<String, Object>> getSummary() {
         KhachHangSummaryDTO summary = khachHangService.getSummary();
         return resSuccess(summary, "Lấy thống kê khách hàng thành công");
     }
+
 }

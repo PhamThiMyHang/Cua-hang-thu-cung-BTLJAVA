@@ -4,8 +4,15 @@ import com.cuahangthucung.controller.base.BaseController;
 
 import com.cuahangthucung.dto.pet.*; // Đảm bảo import đúng package DTO của Chuong
 import com.cuahangthucung.dto.pet.ChuongSummaryDTO;
+
+import com.cuahangthucung.entity.pet.entity.Chuong;
 import com.cuahangthucung.service.pet.ChuongService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,10 +43,24 @@ public class ChuongController extends BaseController {
      * 1. Tìm kiếm và lọc chuồng (Sử dụng Specification)
      * GET /api/chuong/search?trangThai=TRONG&maLoaiChuong=VIP
      */
+
+    /**
+     * 1. Tìm kiếm, lọc và PHÂN TRANG danh sách chuồng
+     */
     @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> search(ChuongSearchRequest request) {
-        List<ChuongDTO> list = chuongService.search(request);
-        return resSuccess(list, "Tìm kiếm danh sách chuồng thành công");
+    public ResponseEntity<?> search(
+            ChuongSearchRequest request,
+            @PageableDefault(sort = "maChuong", direction = Sort.Direction.ASC) Pageable pageable
+    ) {
+        // Lấy Specification từ file bạn đã viết
+        var spec = com.cuahangthucung.repository.pet.ChuongSpecification.getFilter(request);
+
+        // Gọi hàm findAll hỗ trợ phân trang từ BaseService
+        Page<Chuong> resultPage = chuongService.findAll(spec, pageable);
+
+        // Chuyển đổi sang DTO bằng Method Reference (convertToDTO phải là public)
+        return resSuccess(resultPage.map(chuongService::convertToDTO), "Tìm kiếm danh sách chuồng thành công");
+
     }
 
     /**

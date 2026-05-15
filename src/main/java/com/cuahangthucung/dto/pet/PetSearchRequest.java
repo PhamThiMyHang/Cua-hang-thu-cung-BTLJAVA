@@ -12,8 +12,9 @@ public class PetSearchRequest {
     private String maChuong;
     private BigDecimal giaMin;
     private BigDecimal giaMax;
-
+/*
     // Hỗ trợ sắp xếp và phân trang
     private String sortBy = "maPet";
-    private String sortDir = "asc";
+    private String sortDir = "asc";*/
+
 }

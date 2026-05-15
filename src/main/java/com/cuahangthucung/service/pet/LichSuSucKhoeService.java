@@ -15,6 +15,8 @@ public interface LichSuSucKhoeService extends BaseService<LichSuSucKhoe, Integer
 
     // BỔ SUNG: Hàm tính số bản ghi (Yêu cầu count 2-8)
     long countByRequest(LichSuSearchRequest request);
+    LichSuSucKhoeDTO convertToDTO(LichSuSucKhoe entity);
+
 
 }
 

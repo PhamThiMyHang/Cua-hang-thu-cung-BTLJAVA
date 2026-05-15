@@ -4,6 +4,8 @@ import com.cuahangthucung.dto.pet.*;
 import com.cuahangthucung.entity.pet.entity.Chuong;
 import com.cuahangthucung.entity.pet.entity.LoaiChuong;
 import com.cuahangthucung.entity.pet.enums.TrangThaiChuong;
+import com.cuahangthucung.exception.ResourceNotFoundException;
+
 import com.cuahangthucung.repository.pet.ChuongRepository;
 import com.cuahangthucung.repository.pet.ChuongSpecification;
 import com.cuahangthucung.repository.pet.LoaiChuongRepository;
@@ -41,25 +43,38 @@ public class ChuongServiceImpl extends BaseServiceImpl<Chuong, String, ChuongRep
     @Transactional
     public ChuongDTO saveRequest(ChuongRequest request) {
         Chuong chuong;
-        // Kiểm tra xem là tạo mới hay cập nhật
+        // 1. Kiểm tra thêm mới hay cập nhật
         if (request.getMaChuong() != null && !request.getMaChuong().trim().isEmpty()) {
             chuong = repository.findById(request.getMaChuong())
-                    .orElse(new Chuong());
+                    .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy chuồng mã: " + request.getMaChuong()));
         } else {
             chuong = new Chuong();
+            String newId = generateNextMaChuong(); // Sinh mã (VD: C001)
+            chuong.setMaChuong(newId);
         }
 
-        // Copy các thuộc tính cơ bản (Trạng thái, Tên, ...)
-        BeanUtils.copyProperties(request, chuong);
+        // 2. Copy dữ liệu cơ bản (TenChuong, TrangThai, MoTa)
+        // Lưu ý: Không copy "loaiChuong" vì ta sẽ map thủ công qua ID
+        BeanUtils.copyProperties(request, chuong, "maChuong", "loaiChuong", "danhSachPet");
 
-        // Xử lý logic gán Quan hệ (Relationship)
+        // 3. Mapping Quan hệ: Loại Chuồng (LoaiChuong)
         if (request.getMaLoaiChuong() != null) {
             LoaiChuong loai = loaiChuongRepository.findById(request.getMaLoaiChuong())
-                    .orElseThrow(() -> new RuntimeException("Loại chuồng không tồn tại: " + request.getMaLoaiChuong()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Loại chuồng không tồn tại: " + request.getMaLoaiChuong()));
+
             chuong.setLoaiChuong(loai);
         }
 
+        // 4. Logic bổ sung (Nếu cần):
+        // Ví dụ: Nếu chuồng mới tạo mặc định là TRONG
+        if (chuong.getTrangThai() == null) {
+            chuong.setTrangThai(TrangThaiChuong.TRONG);
+        }
+
+        // 5. Lưu vào Database
         Chuong saved = repository.save(chuong);
+
+        // 6. Trả về DTO
         return convertToDTO(saved);
     }
 
@@ -95,7 +110,9 @@ public class ChuongServiceImpl extends BaseServiceImpl<Chuong, String, ChuongRep
                 .collect(Collectors.toList());
     }
 
-    private ChuongDTO convertToDTO(Chuong chuong) {
+    @Override
+    public ChuongDTO convertToDTO(Chuong chuong) {
+
         ChuongDTO dto = new ChuongDTO();
         BeanUtils.copyProperties(chuong, dto);
 
@@ -113,5 +130,17 @@ public class ChuongServiceImpl extends BaseServiceImpl<Chuong, String, ChuongRep
 
         return dto;
     }
+
+    public String generateNextMaChuong() {
+        String maxId = repository.findMaxMaChuong(); // Kết quả ví dụ: "C015"
+        if (maxId == null) {
+            return "C001"; // Mã đầu tiên nếu bảng trống
+        }
+
+        // Tách phần số ra (bỏ chữ 'C'), tăng lên 1, sau đó format lại
+        int nextNumber = Integer.parseInt(maxId.substring(1)) + 1;
+        return String.format("C%03d", nextNumber); // Kết quả: "C016"
+    }
+
 
 }

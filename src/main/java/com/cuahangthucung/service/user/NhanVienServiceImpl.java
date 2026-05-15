@@ -46,6 +46,12 @@ public class NhanVienServiceImpl extends BaseServiceImpl<NhanVien, Integer, Nhan
     }
 
     @Override
+    public String generateNextMaNV() {
+        // Chỉ đơn giản là lấy ID cuối + 1
+        return repository.findLastNhanVien()
+                .map(last -> String.valueOf(last.getMaNV() + 1))
+                .orElse("1"); // Nếu chưa có nv nào thì bắt đầu từ 1
+    }
     public List<NhanVienDTO> findAllDTO() {
         return repository.findAll().stream()
                 .map(this::convertToDTO)

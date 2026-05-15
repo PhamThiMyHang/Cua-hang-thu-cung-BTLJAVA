@@ -18,6 +18,10 @@ public class PetImageSpecification {
 
                 // 2. Tìm tất cả bản ghi của một pet theo mã
                 GenericSpecification.fieldEquals("pet.maPet", request.getMaPet()),
+                // Tìm theo tên Pet (Join sang bảng Pet)
+                request.getTenPet() != null && !request.getTenPet().isBlank() ?
+                        (root, query, cb) -> cb.like(root.get("pet").get("tenPet"), "%" + request.getTenPet() + "%")
+                        : null,
 
                 // 3, 5, 6. Tìm bản ghi trong một ngày cụ thể (Xử lý từ 00:00:00 đến 23:59:59)
                 request.getNgayCuThe() != null ?

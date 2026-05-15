@@ -77,4 +77,15 @@ public class KhachHangServiceImpl extends BaseServiceImpl<KhachHang, Integer, Kh
 
         return dto;
     }
+
+
+
+    @Override
+    public String generateNextMaKH() {
+        // Nếu bạn vẫn muốn trả về String cho Frontend hiển thị,
+        // chỉ cần lấy ID lớn nhất hiện tại cộng thêm 1.
+        return repository.findLastKhachHang()
+                .map(last -> String.valueOf(last.getMaKH() + 1))
+                .orElse("1"); // Nếu chưa có khách nào thì bắt đầu từ 1
+    }
 }
