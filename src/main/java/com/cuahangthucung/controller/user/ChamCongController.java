@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/cham-cong")
-@CrossOrigin("*")
+
 public class ChamCongController extends BaseController {
 
     private final ChamCongService chamCongService;

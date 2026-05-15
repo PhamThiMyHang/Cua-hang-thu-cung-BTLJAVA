@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/kpi-thuong-phat")
-@CrossOrigin("*")
+
 public class KPIThuongPhatController extends BaseController {
 
     private final KPIThuongPhatService kpiService;

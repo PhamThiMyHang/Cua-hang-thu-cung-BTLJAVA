@@ -15,7 +15,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/nhan-vien")
-@CrossOrigin("*")
+
 public class NhanVienController extends BaseController {
 
     private final NhanVienService nhanVienService;

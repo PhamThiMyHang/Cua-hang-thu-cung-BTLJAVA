@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/khach-hang")
-@CrossOrigin("*")
+
 public class KhachHangController extends BaseController {
 
     private final KhachHangService khachHangService;

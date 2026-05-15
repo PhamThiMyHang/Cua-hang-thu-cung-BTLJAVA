@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/lich-truc")
-@CrossOrigin("*")
+
 public class LichTrucController extends BaseController {
 
     private final LichTrucService lichTrucService;

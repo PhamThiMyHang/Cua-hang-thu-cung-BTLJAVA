@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/ho-so-nhan-vien")
-@CrossOrigin("*")
+
 public class HoSoNhanVienController extends BaseController {
 
     private final HoSoNhanVienService hoSoNhanVienService;
