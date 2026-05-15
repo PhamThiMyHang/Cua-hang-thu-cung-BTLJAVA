@@ -1,15 +1,17 @@
 package com.cuahangthucung.controller.user;
 
 import com.cuahangthucung.controller.base.BaseController;
-import com.cuahangthucung.entity.user.entity.HoSoNhanVien;
+import com.cuahangthucung.dto.user.*;
 import com.cuahangthucung.service.user.HoSoNhanVienService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/hoso-nhanvien")
+@RequestMapping("/api/ho-so-nhan-vien")
 @CrossOrigin("*")
 public class HoSoNhanVienController extends BaseController {
 
@@ -19,26 +21,41 @@ public class HoSoNhanVienController extends BaseController {
         this.hoSoNhanVienService = hoSoNhanVienService;
     }
 
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> getAll() {
-        return resSuccess(hoSoNhanVienService.findAll(), "Lấy danh sách hồ sơ nhân viên thành công");
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, Object>> search(HoSoNhanVienSearchRequest request) {
+        List<HoSoNhanVienDTO> list = hoSoNhanVienService.search(request);
+        return resSuccess(list, "Tìm kiếm hồ sơ thành công");
     }
 
-    @GetMapping("/nhanvien/{maNV}")
-    public ResponseEntity<Map<String, Object>> getByNhanVien(@PathVariable Integer maNV) {
-        return hoSoNhanVienService.findByNhanVienMaNV(maNV)
-                .map(hs -> resSuccess(hs, "Tìm thấy hồ sơ"))
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getAll() {
+        List<HoSoNhanVienDTO> list = hoSoNhanVienService.findAllDTO();
+        return resSuccess(list, "Lấy danh sách hồ sơ thành công");
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> getById(@PathVariable Integer id) {
+        HoSoNhanVienDTO dto = hoSoNhanVienService.findByIdDTO(id);
+        return resSuccess(dto, "Tìm thấy hồ sơ");
+    }
+
+    @GetMapping("/nhan-vien/{maNV}")
+    public ResponseEntity<Map<String, Object>> getByMaNV(@PathVariable Integer maNV) {
+        HoSoNhanVienDTO dto = hoSoNhanVienService.findByMaNV(maNV);
+        return resSuccess(dto, "Tìm thấy hồ sơ nhân viên");
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> create(@RequestBody HoSoNhanVien hoSo) {
-        return resCreated(hoSoNhanVienService.save(hoSo), "Thêm hồ sơ nhân viên thành công");
+    public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody HoSoNhanVienRequest request) {
+        HoSoNhanVienDTO saved = hoSoNhanVienService.saveRequest(request);
+        return resCreated(saved, "Thêm hồ sơ thành công");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody HoSoNhanVien hoSo) {
-        HoSoNhanVien updated = hoSoNhanVienService.update(id, hoSo);
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, 
+                                                      @Valid @RequestBody HoSoNhanVienRequest request) {
+        request.setMaHoSo(id);
+        HoSoNhanVienDTO updated = hoSoNhanVienService.saveRequest(request);
         return resSuccess(updated, "Cập nhật hồ sơ thành công");
     }
 

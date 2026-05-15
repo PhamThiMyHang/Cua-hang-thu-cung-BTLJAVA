@@ -44,7 +44,6 @@ public class PetImageServiceImpl extends BaseServiceImpl<PetImage, Integer, PetI
         }
 
         BeanUtils.copyProperties(request, entity);
-
         // Xử lý gắn Pet linh hoạt
         if (request.getMaPet() != null && !request.getMaPet().isBlank()) {
             // Ưu tiên tìm theo mã Pet

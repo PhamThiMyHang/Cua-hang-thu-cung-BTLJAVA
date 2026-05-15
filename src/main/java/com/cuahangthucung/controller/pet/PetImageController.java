@@ -5,6 +5,16 @@ package com.cuahangthucung.controller.pet;
 import com.cuahangthucung.controller.base.BaseController;
 
 import com.cuahangthucung.dto.pet.*;
+
+import com.cuahangthucung.service.pet.PetImageService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import com.cuahangthucung.entity.pet.entity.PetImage;
+
 import com.cuahangthucung.service.pet.PetImageService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

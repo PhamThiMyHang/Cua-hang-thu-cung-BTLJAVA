@@ -26,4 +26,5 @@ public interface PetService extends BaseService<Pet, String> {
     List<PetDTO> findAllDTO();
 
     PetDTO convertToDTO(Pet pet);
+
 }

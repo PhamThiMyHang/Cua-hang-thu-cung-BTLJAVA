@@ -3,6 +3,7 @@ package com.cuahangthucung.service.pet;
 
 import com.cuahangthucung.dto.pet.*;
 import com.cuahangthucung.entity.pet.entity.Chuong;
+
 import com.cuahangthucung.entity.pet.entity.Pet;
 import com.cuahangthucung.entity.pet.enums.TrangThaiChuong;
 import com.cuahangthucung.repository.pet.ChuongRepository;
@@ -135,7 +136,6 @@ public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> 
         if (pet.getTinhTrang() != null) {
             dto.setTinhTrang(pet.getTinhTrang().name());
         }
-
         if (pet.getChuong() != null) {
             dto.setMaChuong(pet.getChuong().getMaChuong());
             if (pet.getChuong().getLoaiChuong() != null) {
@@ -174,6 +174,7 @@ public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> 
         return pet.getLichSuSucKhoe().stream()
                 .anyMatch(ls -> ls.getLoai().name().equals("Benh"));
 
+
     }
 
     /*Them chức năng*/
@@ -198,5 +199,6 @@ public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> 
         // Lưu ý: Các bảng liên quan như PET_IMAGE hoặc LICHSU_SUC_KHOE
         // sẽ tự động xóa nếu bạn đã cấu hình cascade = CascadeType.ALL.
         repository.delete(pet);
+
     }
 }

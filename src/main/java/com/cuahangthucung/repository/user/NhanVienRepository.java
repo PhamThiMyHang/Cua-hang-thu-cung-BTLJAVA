@@ -1,23 +1,16 @@
 package com.cuahangthucung.repository.user;
 
 import com.cuahangthucung.entity.user.entity.NhanVien;
+import com.cuahangthucung.entity.user.enums.ChucVu;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-/**
- * Repository cho bảng NHANVIEN
- */
 @Repository
 public interface NhanVienRepository extends JpaRepository<NhanVien, Integer>, JpaSpecificationExecutor<NhanVien> {
-
-    Optional<NhanVien> findByUserUserID(Integer userId);
-
-    Optional<NhanVien> findBySdt(String sdt);
 
     boolean existsBySdt(String sdt);
     // Lấy nhân viên có ID lớn nhất
@@ -28,4 +21,15 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer>, Jp
     Optional<NhanVien> findLastNhanVien();
  */
 
+    @Query("SELECT COUNT(n) FROM NhanVien n")
+    Long countTotalNhanVien();
+
+    @Query("SELECT COUNT(n) FROM NhanVien n WHERE n.chucVu = 'STAFF'")
+    Long countStaff();
+
+    @Query("SELECT COUNT(n) FROM NhanVien n WHERE n.chucVu = 'KTV'")
+    Long countKTV();
+
+    @Query("SELECT COUNT(n) FROM NhanVien n WHERE n.user IS NOT NULL")
+    Long countNhanVienCoTaiKhoan();
 }

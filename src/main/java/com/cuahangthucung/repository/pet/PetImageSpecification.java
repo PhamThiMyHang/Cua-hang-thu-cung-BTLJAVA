@@ -18,7 +18,6 @@ public class PetImageSpecification {
 
                 // 2. Tìm tất cả bản ghi của một pet theo mã
                 GenericSpecification.fieldEquals("pet.maPet", request.getMaPet()),
-
                 // Tìm theo tên Pet (Join sang bảng Pet)
                 request.getTenPet() != null && !request.getTenPet().isBlank() ?
                         (root, query, cb) -> cb.like(root.get("pet").get("tenPet"), "%" + request.getTenPet() + "%")

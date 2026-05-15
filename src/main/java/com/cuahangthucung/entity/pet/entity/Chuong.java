@@ -39,4 +39,13 @@ public class Chuong {
     @ToString.Exclude // Tránh vòng lặp vô hạn khi log/print dữ liệu
     @JsonIgnore
     private List<Pet> danhSachPet;
+
+	public String getMaChuong() {
+		return maChuong;
+	}
+
+	public void setMaChuong(String maChuong) {
+		this.maChuong = maChuong;
+	}
+    
 }

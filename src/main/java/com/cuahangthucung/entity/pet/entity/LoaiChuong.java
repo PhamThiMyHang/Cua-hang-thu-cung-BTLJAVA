@@ -37,4 +37,13 @@ public class LoaiChuong {
     @ToString.Exclude // Tránh vòng lặp vô hạn khi in log
     @JsonIgnore
     private List<Chuong> danhSachChuong;
+
+	public List<Chuong> getDanhSachChuong() {
+		return danhSachChuong;
+	}
+
+	public void setDanhSachChuong(List<Chuong> danhSachChuong) {
+		this.danhSachChuong = danhSachChuong;
+	}
+    
 }

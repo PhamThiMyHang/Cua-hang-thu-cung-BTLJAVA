@@ -5,6 +5,7 @@ import com.cuahangthucung.entity.pet.entity.Chuong;
 import com.cuahangthucung.entity.pet.entity.LoaiChuong;
 import com.cuahangthucung.entity.pet.enums.TrangThaiChuong;
 import com.cuahangthucung.exception.ResourceNotFoundException;
+
 import com.cuahangthucung.repository.pet.LoaiChuongRepository;
 import com.cuahangthucung.repository.pet.LoaiChuongSpecification;
 import com.cuahangthucung.service.base.BaseServiceImpl;
@@ -110,6 +111,7 @@ public class LoaiChuongServiceImpl extends BaseServiceImpl<LoaiChuong, String, L
 
         return dto;
     }
+
     public String generateNextMaLoaiChuong() {
         String maxId = repository.findMaxMaLoaiChuong(); // Kết quả ví dụ: "LC005"
 
@@ -127,5 +129,6 @@ public class LoaiChuongServiceImpl extends BaseServiceImpl<LoaiChuong, String, L
             return "LC001"; // Phòng trường hợp mã cũ bị sai định dạng
         }
     }
+
 
 }

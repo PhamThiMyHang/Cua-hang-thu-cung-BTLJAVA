@@ -22,5 +22,6 @@ public interface LoaiChuongService extends BaseService<LoaiChuong, String> {
 
     LoaiChuongDTO convertToDTO(LoaiChuong entity);
 
+
 }
 

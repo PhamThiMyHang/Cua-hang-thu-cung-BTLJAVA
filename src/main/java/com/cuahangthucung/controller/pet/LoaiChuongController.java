@@ -6,10 +6,12 @@ import com.cuahangthucung.dto.pet.*; // Hoặc dto.pet.* tùy cấu trúc folder
 import com.cuahangthucung.dto.pet.LoaiChuongRequest;
 import com.cuahangthucung.service.pet.LoaiChuongService;
 import jakarta.validation.Valid;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +38,7 @@ public class LoaiChuongController extends BaseController {
     /**
      * 1. Lọc động danh mục loại chuồng
      */
+
     /**
      * 1. Lọc động và PHÂN TRANG danh mục loại chuồng
      */
@@ -70,7 +73,16 @@ public class LoaiChuongController extends BaseController {
         LoaiChuongDTO dto = loaiChuongService.findByIdDTO(id);
         return resSuccess(dto, "Tìm thấy loại chuồng");
     }
-
+/*
+    /**
+     * 4. Thêm mới - Dùng RequestDTO thay vì Entity để an toàn dữ liệu
+     *//*
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody LoaiChuongRequest request) {
+        LoaiChuongDTO saved = loaiChuongService.saveRequest(request);
+        return resCreated(saved, "Thêm loại chuồng thành công");
+    }
+*/
     /**
      * 4. Thêm mới - Dùng RequestDTO thay vì Entity để an toàn dữ liệu
      */
@@ -81,6 +93,7 @@ public class LoaiChuongController extends BaseController {
     }
 
     /**
+u
      * 5. Cập nhật
      */
     @PutMapping("/{id}")

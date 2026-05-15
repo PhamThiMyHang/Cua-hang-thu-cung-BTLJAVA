@@ -5,6 +5,7 @@ import com.cuahangthucung.entity.pet.entity.Chuong;
 import com.cuahangthucung.entity.pet.entity.LoaiChuong;
 import com.cuahangthucung.entity.pet.enums.TrangThaiChuong;
 import com.cuahangthucung.exception.ResourceNotFoundException;
+
 import com.cuahangthucung.repository.pet.ChuongRepository;
 import com.cuahangthucung.repository.pet.ChuongSpecification;
 import com.cuahangthucung.repository.pet.LoaiChuongRepository;
@@ -42,7 +43,6 @@ public class ChuongServiceImpl extends BaseServiceImpl<Chuong, String, ChuongRep
     @Transactional
     public ChuongDTO saveRequest(ChuongRequest request) {
         Chuong chuong;
-
         // 1. Kiểm tra thêm mới hay cập nhật
         if (request.getMaChuong() != null && !request.getMaChuong().trim().isEmpty()) {
             chuong = repository.findById(request.getMaChuong())
@@ -112,6 +112,7 @@ public class ChuongServiceImpl extends BaseServiceImpl<Chuong, String, ChuongRep
 
     @Override
     public ChuongDTO convertToDTO(Chuong chuong) {
+
         ChuongDTO dto = new ChuongDTO();
         BeanUtils.copyProperties(chuong, dto);
 
@@ -129,6 +130,7 @@ public class ChuongServiceImpl extends BaseServiceImpl<Chuong, String, ChuongRep
 
         return dto;
     }
+
     public String generateNextMaChuong() {
         String maxId = repository.findMaxMaChuong(); // Kết quả ví dụ: "C015"
         if (maxId == null) {
@@ -139,5 +141,6 @@ public class ChuongServiceImpl extends BaseServiceImpl<Chuong, String, ChuongRep
         int nextNumber = Integer.parseInt(maxId.substring(1)) + 1;
         return String.format("C%03d", nextNumber); // Kết quả: "C016"
     }
+
 
 }

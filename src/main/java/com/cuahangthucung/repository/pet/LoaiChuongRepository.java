@@ -4,7 +4,8 @@ import com.cuahangthucung.entity.pet.entity.LoaiChuong;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+
+
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -25,7 +26,9 @@ public interface LoaiChuongRepository extends JpaRepository<LoaiChuong, String>,
     @Query(value = "SELECT TenLoai FROM LOAICHUONG ORDER BY SoLuong DESC LIMIT 1", nativeQuery = true)
     Optional<String> getNameOfMostPopularType();
 
+
     @Query("SELECT MAX(lc.maLoaiChuong) FROM LoaiChuong lc")
     String findMaxMaLoaiChuong();
+
 
 }

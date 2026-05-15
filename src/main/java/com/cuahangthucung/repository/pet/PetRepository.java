@@ -32,9 +32,11 @@ public interface PetRepository extends JpaRepository<Pet, String>, JpaSpecificat
     @Query("SELECT COUNT(p) FROM Pet p WHERE p.maPet LIKE :monthPrefix%")
     Long countNewPetsInMonth(@Param("monthPrefix") String monthPrefix);
 
+
 /*15/05/2026 Pham Thi My Hang*/
 
         // Tìm kiếm thú cưng theo tên (Spring Data JPA sẽ tự tạo query)
         Optional<Pet> findByTenPet(String tenPet);
+
 
 }

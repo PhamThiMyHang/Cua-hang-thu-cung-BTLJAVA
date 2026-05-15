@@ -20,5 +20,6 @@ public interface PetImageService extends BaseService<PetImage, Integer> {
     PetImageSummaryDTO getSummary(PetImageSearchRequest request);
 
     PetImageDTO convertToDTO(PetImage entity);
+
 }
 

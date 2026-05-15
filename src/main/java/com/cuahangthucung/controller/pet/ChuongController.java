@@ -4,6 +4,7 @@ import com.cuahangthucung.controller.base.BaseController;
 
 import com.cuahangthucung.dto.pet.*; // Đảm bảo import đúng package DTO của Chuong
 import com.cuahangthucung.dto.pet.ChuongSummaryDTO;
+
 import com.cuahangthucung.entity.pet.entity.Chuong;
 import com.cuahangthucung.service.pet.ChuongService;
 import jakarta.validation.Valid;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +43,7 @@ public class ChuongController extends BaseController {
      * 1. Tìm kiếm và lọc chuồng (Sử dụng Specification)
      * GET /api/chuong/search?trangThai=TRONG&maLoaiChuong=VIP
      */
+
     /**
      * 1. Tìm kiếm, lọc và PHÂN TRANG danh sách chuồng
      */
@@ -57,6 +60,7 @@ public class ChuongController extends BaseController {
 
         // Chuyển đổi sang DTO bằng Method Reference (convertToDTO phải là public)
         return resSuccess(resultPage.map(chuongService::convertToDTO), "Tìm kiếm danh sách chuồng thành công");
+
     }
 
     /**
