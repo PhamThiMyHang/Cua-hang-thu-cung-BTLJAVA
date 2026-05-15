@@ -35,6 +35,7 @@ public class PetController extends BaseController {
     @GetMapping
     public ResponseEntity<?> getAll() {
         return resSuccess(petService.findAllDTO(), "Lấy danh sách thú cưng thành công");
+
     }
     /**
      * 1. Tìm kiếm, Lọc và Sắp xếp động
@@ -49,6 +50,7 @@ public class PetController extends BaseController {
                 pageable
         );
         return resSuccess(resultPage.map(petService::convertToDTO), "Tìm kiếm thú cưng thành công");
+
     }
 
     /**
@@ -93,6 +95,7 @@ public class PetController extends BaseController {
     public ResponseEntity<?> update(@PathVariable String maPet, @RequestBody PetRequest request) {
         request.setMaPet(maPet);
         return resSuccess(petService.saveRequest(request), "Cập nhật thông tin thú cưng thành công");
+
     }
 
     /**
@@ -119,6 +122,7 @@ public class PetController extends BaseController {
     @GetMapping("/next-id")
     public ResponseEntity<?> getNextMaPet() {
         return resSuccess(petService.generateNextMaPet(), "Lấy mã ID tự động thành công");
+
     }
 
 

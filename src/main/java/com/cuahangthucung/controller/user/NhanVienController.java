@@ -8,12 +8,15 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
+/**
+ * CONTROLLER QUẢN LÝ NHÂN VIÊN
+ * Liên kết với: User, HoSoNhanVien, ChamCong, LichTruc, KPIThuongPhat
+ */
 @RestController
 @RequestMapping("/api/nhan-vien")
-@CrossOrigin("*")
+
 public class NhanVienController extends BaseController {
 
     private final NhanVienService nhanVienService;
@@ -23,27 +26,25 @@ public class NhanVienController extends BaseController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> search(NhanVienSearchRequest request) {
-        List<NhanVienDTO> list = nhanVienService.search(request);
-        return resSuccess(list, "Tìm kiếm nhân viên thành công");
+    public ResponseEntity<?> search(NhanVienSearchRequest request) {
+        var result = nhanVienService.search(request);
+        return resSuccess(result, "Tìm kiếm nhân viên thành công");
     }
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAll() {
-        List<NhanVienDTO> list = nhanVienService.findAllDTO();
-        return resSuccess(list, "Lấy danh sách nhân viên thành công");
+        return resSuccess(nhanVienService.findAllDTO(), "Lấy danh sách nhân viên thành công");
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getById(@PathVariable Integer id) {
-        NhanVienDTO dto = nhanVienService.findByIdDTO(id);
-        return resSuccess(dto, "Tìm thấy nhân viên");
+        return resSuccess(nhanVienService.findByIdDTO(id), "Tìm thấy nhân viên mã: " + id);
     }
 /* bỏ
     @PostMapping
     public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody NhanVienRequest request) {
         NhanVienDTO saved = nhanVienService.saveRequest(request);
-        return resCreated(saved, "Thêm nhân viên thành công");
+        return resCreated(saved, "Thêm nhân viên mới thành công");
     }
 */
     @PostMapping
@@ -54,8 +55,9 @@ public class NhanVienController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, 
-                                                      @Valid @RequestBody NhanVienRequest request) {
+    public ResponseEntity<Map<String, Object>> update(
+            @PathVariable Integer id,
+            @Valid @RequestBody NhanVienRequest request) {
         request.setMaNV(id);
         NhanVienDTO updated = nhanVienService.saveRequest(request);
         return resSuccess(updated, "Cập nhật nhân viên thành công");
@@ -69,7 +71,6 @@ public class NhanVienController extends BaseController {
 
     @GetMapping("/summary")
     public ResponseEntity<Map<String, Object>> getSummary() {
-        NhanVienSummaryDTO summary = nhanVienService.getSummary();
-        return resSuccess(summary, "Lấy thống kê nhân viên thành công");
+        return resSuccess(nhanVienService.getSummary(), "Lấy thống kê nhân viên thành công");
     }
 }

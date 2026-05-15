@@ -50,6 +50,7 @@ public class PetImageController extends BaseController {
      */
     @GetMapping("/search")
     public ResponseEntity<?> search(
+
             PetImageSearchRequest request,
             @PageableDefault(sort = "maImg", direction = Sort.Direction.DESC) Pageable pageable
     ) {
@@ -61,6 +62,7 @@ public class PetImageController extends BaseController {
 
         // Chuyển đổi sang DTO thông qua Method Reference (Yêu cầu convertToDTO phải là public)
         return resSuccess(resultPage.map(petImageService::convertToDTO), "Tìm kiếm hình ảnh thành công");
+
     }
 
     /**

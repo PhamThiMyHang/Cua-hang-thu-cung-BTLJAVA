@@ -7,12 +7,19 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
+/**
+ * =============================================
+ * HOSO_NHANVIEN CONTROLLER
+ * =============================================
+ * Quản lý hồ sơ chi tiết của nhân viên
+ * Liên kết 1-1 với bảng NhanVien
+ * Chứa thông tin: bằng cấp, kinh nghiệm, trình độ...
+ */
 @RestController
 @RequestMapping("/api/ho-so-nhan-vien")
-@CrossOrigin("*")
+
 public class HoSoNhanVienController extends BaseController {
 
     private final HoSoNhanVienService hoSoNhanVienService;
@@ -21,47 +28,68 @@ public class HoSoNhanVienController extends BaseController {
         this.hoSoNhanVienService = hoSoNhanVienService;
     }
 
+    /**
+     * Tìm kiếm hồ sơ nhân viên
+     * Hỗ trợ: theo mã nhân viên, từ khóa (bằng cấp, trình độ, kinh nghiệm)
+     */
     @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> search(HoSoNhanVienSearchRequest request) {
-        List<HoSoNhanVienDTO> list = hoSoNhanVienService.search(request);
-        return resSuccess(list, "Tìm kiếm hồ sơ thành công");
+    public ResponseEntity<?> search(HoSoNhanVienSearchRequest request) {
+        var result = hoSoNhanVienService.search(request);
+        return resSuccess(result, "Tìm kiếm hồ sơ nhân viên thành công");
     }
 
+    /**
+     * Lấy tất cả hồ sơ nhân viên
+     */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAll() {
-        List<HoSoNhanVienDTO> list = hoSoNhanVienService.findAllDTO();
-        return resSuccess(list, "Lấy danh sách hồ sơ thành công");
+        return resSuccess(hoSoNhanVienService.findAllDTO(), "Lấy toàn bộ danh sách hồ sơ nhân viên thành công");
     }
 
+    /**
+     * Lấy chi tiết hồ sơ theo ID
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getById(@PathVariable Integer id) {
-        HoSoNhanVienDTO dto = hoSoNhanVienService.findByIdDTO(id);
-        return resSuccess(dto, "Tìm thấy hồ sơ");
+        return resSuccess(hoSoNhanVienService.findByIdDTO(id), "Tìm thấy hồ sơ mã: " + id);
     }
 
+    /**
+     * Lấy hồ sơ theo mã nhân viên (API rất hay dùng)
+     */
     @GetMapping("/nhan-vien/{maNV}")
     public ResponseEntity<Map<String, Object>> getByMaNV(@PathVariable Integer maNV) {
-        HoSoNhanVienDTO dto = hoSoNhanVienService.findByMaNV(maNV);
-        return resSuccess(dto, "Tìm thấy hồ sơ nhân viên");
+        return resSuccess(hoSoNhanVienService.findByMaNV(maNV), 
+                "Tìm thấy hồ sơ của nhân viên mã: " + maNV);
     }
 
+    /**
+     * Tạo mới hồ sơ cho nhân viên
+     */
     @PostMapping
     public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody HoSoNhanVienRequest request) {
         HoSoNhanVienDTO saved = hoSoNhanVienService.saveRequest(request);
-        return resCreated(saved, "Thêm hồ sơ thành công");
+        return resCreated(saved, "Tạo hồ sơ nhân viên thành công");
     }
 
+    /**
+     * Cập nhật hồ sơ nhân viên
+     */
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, 
-                                                      @Valid @RequestBody HoSoNhanVienRequest request) {
+    public ResponseEntity<Map<String, Object>> update(
+            @PathVariable Integer id,
+            @Valid @RequestBody HoSoNhanVienRequest request) {
         request.setMaHoSo(id);
         HoSoNhanVienDTO updated = hoSoNhanVienService.saveRequest(request);
-        return resSuccess(updated, "Cập nhật hồ sơ thành công");
+        return resSuccess(updated, "Cập nhật hồ sơ nhân viên thành công");
     }
 
+    /**
+     * Xóa hồ sơ nhân viên
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Integer id) {
         hoSoNhanVienService.deleteById(id);
-        return resSuccess(null, "Xóa hồ sơ thành công");
+        return resSuccess(null, "Xóa hồ sơ nhân viên thành công");
     }
 }
