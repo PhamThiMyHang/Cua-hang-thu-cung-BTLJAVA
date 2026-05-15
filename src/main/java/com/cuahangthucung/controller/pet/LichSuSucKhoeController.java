@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/lich-su-suc-khoe")
-@CrossOrigin("*")
+//@CrossOrigin("*")
 public class LichSuSucKhoeController extends BaseController {
 
     private final LichSuSucKhoeService service;

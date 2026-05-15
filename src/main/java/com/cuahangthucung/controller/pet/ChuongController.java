@@ -30,7 +30,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/chuong")
 
-@CrossOrigin("*")
+//@CrossOrigin("*")
 public class ChuongController extends BaseController {
 
     private final ChuongService chuongService;

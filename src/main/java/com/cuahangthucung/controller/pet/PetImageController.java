@@ -35,7 +35,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pet-images")
-@CrossOrigin("*")
+//@CrossOrigin("*")
 public class PetImageController extends BaseController {
 
     private final PetImageService petImageService;
@@ -49,7 +49,7 @@ public class PetImageController extends BaseController {
      * Hỗ trợ lọc theo: maImg, maPet, ngayCuThe
      */
     @GetMapping("/search")
-    public ResponseEntity<Page<PetImageDTO>> search(
+    public ResponseEntity<?> search(
             PetImageSearchRequest request,
             @PageableDefault(sort = "maImg", direction = Sort.Direction.DESC) Pageable pageable
     ) {
@@ -60,7 +60,7 @@ public class PetImageController extends BaseController {
         Page<PetImage> resultPage = petImageService.findAll(spec, pageable);
 
         // Chuyển đổi sang DTO thông qua Method Reference (Yêu cầu convertToDTO phải là public)
-        return ResponseEntity.ok(resultPage.map(petImageService::convertToDTO));
+        return resSuccess(resultPage.map(petImageService::convertToDTO), "Tìm kiếm hình ảnh thành công");
     }
 
     /**

@@ -25,7 +25,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/loai-chuong")
-@CrossOrigin("*")
+//@CrossOrigin("*")
 public class LoaiChuongController extends BaseController {
 
     private final LoaiChuongService loaiChuongService;

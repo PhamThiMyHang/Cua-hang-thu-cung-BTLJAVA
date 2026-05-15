@@ -27,33 +27,28 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/pets")
 @RequiredArgsConstructor // Tự động tạo Constructor để tiêm PetService
-@CrossOrigin("*") // Cho phép Frontend gọi API
-public class PetController {
+//@CrossOrigin("*") // Cho phép Frontend gọi API
+public class PetController extends BaseController {
 
     private final PetService petService;
 
     @GetMapping
-    public ResponseEntity<List<PetDTO>> getAll() {
-        return ResponseEntity.ok(petService.findAllDTO());
+    public ResponseEntity<?> getAll() {
+        return resSuccess(petService.findAllDTO(), "Lấy danh sách thú cưng thành công");
     }
     /**
      * 1. Tìm kiếm, Lọc và Sắp xếp động
      */
     @GetMapping("/search")
-    public ResponseEntity<Page<PetDTO>> search( // <--- THAY ĐỔI: Trả về Page thay vì List
-                                                PetSearchRequest request,
-                                                @PageableDefault(sort = "maPet", direction = Sort.Direction.DESC) Pageable pageable // <--- THAY ĐỔI: Thêm đối tượng Pageable
+    public ResponseEntity<?> search(
+            PetSearchRequest request,
+            @PageableDefault(sort = "maPet", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        // Gọi hàm findAll từ BaseService đã hỗ trợ sẵn Spec và Pageable
         Page<Pet> resultPage = petService.findAll(
                 com.cuahangthucung.repository.pet.PetSpecification.getFilter(request),
-                pageable // <--- THAY ĐỔI: Truyền pageable vào hàm tìm kiếm
+                pageable
         );
-
-        // Chuyển đổi Page<Entity> sang Page<DTO> bằng hàm map của Page
-        Page<PetDTO> dtoPage = resultPage.map(petService::convertToDTO); // <--- THAY ĐỔI: Sử dụng .map() để convert
-
-        return ResponseEntity.ok(dtoPage);
+        return resSuccess(resultPage.map(petService::convertToDTO), "Tìm kiếm thú cưng thành công");
     }
 
     /**
@@ -70,8 +65,8 @@ public class PetController {
      * 2. Lấy thông tin chi tiết một thú cưng
      */
     @GetMapping("/{maPet}")
-    public ResponseEntity<PetDTO> getById(@PathVariable String maPet) {
-        return ResponseEntity.ok(petService.findByIdDTO(maPet));
+    public ResponseEntity<?> getById(@PathVariable String maPet) {
+        return resSuccess(petService.findByIdDTO(maPet), "Tìm thấy thú cưng: " + maPet);
     }
 
     /**
@@ -79,11 +74,9 @@ public class PetController {
      * PetRequest chứa maChuong, maKH, maNV dạng ID đơn giản
      */
     @PostMapping
-    public ResponseEntity<PetDTO> create(@Valid @RequestBody PetRequest request) {
-        PetDTO savedPet = petService.saveRequest(request);
-        return new ResponseEntity<>(savedPet, HttpStatus.CREATED);
+    public ResponseEntity<?> create(@Valid @RequestBody PetRequest request) {
+        return resCreated(petService.saveRequest(request), "Tiếp nhận thú cưng mới thành công");
     }
-
     /**
      * 4. Cập nhật   thông tin thú cưng
      */
@@ -97,22 +90,18 @@ public class PetController {
     }
 */
     @PutMapping("/{maPet}")
-    public ResponseEntity<PetDTO> update(
-            @PathVariable String maPet,
-            @RequestBody PetRequest request) {
-        // Gán mã từ URL vào request để service biết đang cập nhật cho thú cưng nào
+    public ResponseEntity<?> update(@PathVariable String maPet, @RequestBody PetRequest request) {
         request.setMaPet(maPet);
-        PetDTO updatedPet = petService.saveRequest(request);
-        return ResponseEntity.ok(updatedPet);
+        return resSuccess(petService.saveRequest(request), "Cập nhật thông tin thú cưng thành công");
     }
 
     /**
      * 5. Xóa thú cưng
      */
     @DeleteMapping("/{maPet}")
-    public ResponseEntity<Void> delete(@PathVariable String maPet) {
+    public ResponseEntity<?> delete(@PathVariable String maPet) {
         petService.deleteById(maPet);
-        return ResponseEntity.noContent().build();
+        return resSuccess(null, "Đã xóa thú cưng khỏi hệ thống");
     }
 
     /**
@@ -120,16 +109,16 @@ public class PetController {
      * Trả về: tổng số lượng, tổng giá trị, số pet bệnh...
      */
     @GetMapping("/summary")
-    public ResponseEntity<PetSummaryDTO> getSummary() {
-        return ResponseEntity.ok(petService.getSummary());
+    public ResponseEntity<?> getSummary() {
+        return resSuccess(petService.getSummary(), "Lấy thống kê thú cưng thành công");
     }
 
     /**
      * 7. API bổ trợ để Frontend lấy mã Pet tự động trước khi thêm
      */
     @GetMapping("/next-id")
-    public ResponseEntity<String> getNextMaPet() {
-        return ResponseEntity.ok(petService.generateNextMaPet());
+    public ResponseEntity<?> getNextMaPet() {
+        return resSuccess(petService.generateNextMaPet(), "Lấy mã ID tự động thành công");
     }
 
 
