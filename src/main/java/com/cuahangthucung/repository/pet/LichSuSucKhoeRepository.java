@@ -13,8 +13,7 @@
     //4.. tính số bản ghi lịch sử sức khoe ca ket luận l loai đươc nhap vao (column loai)
     // 5.  tính số bản ghi lich su cua 1 pet co ma cu the vào 1 ngay cụ thẻ
     //6.  tính số bản ghi lich su cua 1 pet co ma cu the, loai cu the, ngay cu the
-    // 7. tính số bản ghi lich su cua 1 pet co ma cu the, loai cu the,
-    // 8.  tính số bản ghi lich su cua  loai cu the, ngay cu the
+
 package com.cuahangthucung.repository.pet;
 
 import com.cuahangthucung.entity.pet.entity.LichSuSucKhoe;
@@ -29,3 +28,4 @@ public interface LichSuSucKhoeRepository extends JpaRepository<LichSuSucKhoe, In
     // - findAll(Specification) cho các yêu cầu tìm kiếm 1-8
     // - count(Specification) cho các yêu cầu tính toán 2-8
 }
+

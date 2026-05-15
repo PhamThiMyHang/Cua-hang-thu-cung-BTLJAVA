@@ -3,21 +3,18 @@ package com.cuahangthucung.repository.user;
 import com.cuahangthucung.entity.user.entity.ChamCong;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 
-/**
- * Repository cho bảng CHAMCONG
- */
 @Repository
 public interface ChamCongRepository extends JpaRepository<ChamCong, Integer>, JpaSpecificationExecutor<ChamCong> {
 
-    Optional<ChamCong> findByNhanVienMaNVAndNgay(Integer maNV, LocalDate ngay);
+    @Query("SELECT COUNT(c) FROM ChamCong c WHERE c.ngay BETWEEN :start AND :end")
+    Long countByDateRange(@Param("start") LocalDate start, @Param("end") LocalDate end);
 
-    List<ChamCong> findByNhanVienMaNV(Integer maNV);
-
-    List<ChamCong> findByNgayBetween(LocalDate fromDate, LocalDate toDate);
+    @Query("SELECT COUNT(c) FROM ChamCong c WHERE c.nhanVien.maNV = :maNV AND c.ngay = :ngay")
+    Long countByNhanVienAndNgay(@Param("maNV") Integer maNV, @Param("ngay") LocalDate ngay);
 }

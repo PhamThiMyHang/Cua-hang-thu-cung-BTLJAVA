@@ -1,14 +1,14 @@
 package com.cuahangthucung.service.user;
 
+import com.cuahangthucung.dto.user.*;
 import com.cuahangthucung.entity.user.entity.KhachHang;
 import com.cuahangthucung.service.base.BaseService;
-
-import java.util.Optional;
+import java.util.List;
 
 public interface KhachHangService extends BaseService<KhachHang, Integer> {
-
-    Optional<KhachHang> findByUserUserID(Integer userId);
-    Optional<KhachHang> findBySdt(String sdt);
-    boolean existsBySdt(String sdt);
-    String generateNextMaKH();
+    List<KhachHangDTO> search(KhachHangSearchRequest request);
+    KhachHangDTO saveRequest(KhachHangRequest request);
+    KhachHangDTO findByIdDTO(Integer id);
+    List<KhachHangDTO> findAllDTO();
+    KhachHangSummaryDTO getSummary();
 }

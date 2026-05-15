@@ -1,11 +1,13 @@
 package com.cuahangthucung.controller.user;
 
 import com.cuahangthucung.controller.base.BaseController;
-import com.cuahangthucung.entity.user.entity.LichSuDangNhap;
+import com.cuahangthucung.dto.user.*;
 import com.cuahangthucung.service.user.LichSuDangNhapService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -13,19 +15,39 @@ import java.util.Map;
 @CrossOrigin("*")
 public class LichSuDangNhapController extends BaseController {
 
-    private final LichSuDangNhapService lichSuService;
+    private final LichSuDangNhapService lichSuDangNhapService;
 
-    public LichSuDangNhapController(LichSuDangNhapService lichSuService) {
-        this.lichSuService = lichSuService;
+    public LichSuDangNhapController(LichSuDangNhapService lichSuDangNhapService) {
+        this.lichSuDangNhapService = lichSuDangNhapService;
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<Map<String, Object>> getByUser(@PathVariable Integer userId) {
-        return resSuccess(lichSuService.findByUserUserID(userId), "Lấy lịch sử đăng nhập thành công");
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, Object>> search(LichSuDangNhapSearchRequest request) {
+        List<LichSuDangNhapDTO> list = lichSuDangNhapService.search(request);
+        return resSuccess(list, "Tìm kiếm lịch sử đăng nhập thành công");
     }
 
-    @GetMapping("/user/{userId}/top10")
-    public ResponseEntity<Map<String, Object>> getTop10(@PathVariable Integer userId) {
-        return resSuccess(lichSuService.findTop10ByUserUserIDOrderByThoiGianDesc(userId), "Lấy 10 lần đăng nhập gần nhất");
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getAll() {
+        List<LichSuDangNhapDTO> list = lichSuDangNhapService.findAllDTO();
+        return resSuccess(list, "Lấy danh sách lịch sử đăng nhập thành công");
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> getById(@PathVariable Integer id) {
+        LichSuDangNhapDTO dto = lichSuDangNhapService.findByIdDTO(id);
+        return resSuccess(dto, "Tìm thấy lịch sử đăng nhập");
+    }
+
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody LichSuDangNhapRequest request) {
+        LichSuDangNhapDTO saved = lichSuDangNhapService.saveRequest(request);
+        return resCreated(saved, "Thêm lịch sử đăng nhập thành công");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> delete(@PathVariable Integer id) {
+        lichSuDangNhapService.deleteById(id);
+        return resSuccess(null, "Xóa lịch sử đăng nhập thành công");
     }
 }

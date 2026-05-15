@@ -1,11 +1,13 @@
 package com.cuahangthucung.controller.user;
 
 import com.cuahangthucung.controller.base.BaseController;
-import com.cuahangthucung.entity.user.entity.User;
+import com.cuahangthucung.dto.user.*;
 import com.cuahangthucung.service.user.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,40 +21,47 @@ public class UserController extends BaseController {
         this.userService = userService;
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, Object>> search(UserSearchRequest request) {
+        List<UserDTO> list = userService.search(request);
+        return resSuccess(list, "Tìm kiếm user thành công");
+    }
+
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAll() {
-        return resSuccess(userService.findAll(), "Lấy danh sách người dùng thành công");
+        List<UserDTO> list = userService.findAllDTO();
+        return resSuccess(list, "Lấy danh sách user thành công");
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getById(@PathVariable Integer id) {
-        return userService.findById(id)
-                .map(user -> resSuccess(user, "Tìm thấy người dùng"))
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/username/{username}")
-    public ResponseEntity<Map<String, Object>> getByUsername(@PathVariable String username) {
-        return userService.findByUsername(username)
-                .map(user -> resSuccess(user, "Tìm thấy người dùng"))
-                .orElse(ResponseEntity.notFound().build());
+        UserDTO dto = userService.findByIdDTO(id);
+        return resSuccess(dto, "Tìm thấy user");
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> create(@RequestBody User user) {
-        User saved = userService.save(user);
-        return resCreated(saved, "Tạo tài khoản thành công");
+    public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody UserRequest request) {
+        UserDTO saved = userService.saveRequest(request);
+        return resCreated(saved, "Tạo user thành công");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody User user) {
-        User updated = userService.update(id, user);
-        return resSuccess(updated, "Cập nhật người dùng thành công");
+    public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, 
+                                                      @Valid @RequestBody UserRequest request) {
+        request.setUserID(id);
+        UserDTO updated = userService.saveRequest(request);
+        return resSuccess(updated, "Cập nhật user thành công");
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Integer id) {
         userService.deleteById(id);
-        return resSuccess(null, "Xóa người dùng thành công");
+        return resSuccess(null, "Xóa user thành công");
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<Map<String, Object>> getSummary() {
+        UserSummaryDTO summary = userService.getSummary();
+        return resSuccess(summary, "Lấy thống kê user thành công");
     }
 }
