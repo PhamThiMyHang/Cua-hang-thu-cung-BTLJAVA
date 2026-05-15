@@ -24,4 +24,6 @@ public interface PetService extends BaseService<Pet, String> {
     boolean hasSeriousHealthIssue(String maPet);
 /*them chuc nang */
     List<PetDTO> findAllDTO();
+
+    PetDTO convertToDTO(Pet pet);
 }

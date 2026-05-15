@@ -127,7 +127,7 @@ public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> 
     }
 
     // Hàm chuyển đổi Entity -> DTO (Flattening)
-    private PetDTO convertToDTO(Pet pet) {
+    public PetDTO convertToDTO(Pet pet) {
         PetDTO dto = new PetDTO();
         BeanUtils.copyProperties(pet, dto);
 
@@ -180,5 +180,23 @@ public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> 
     @Override
     public List<PetDTO> findAllDTO() {
         return repository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+    @Transactional
+    public void delete(String maPet) {
+        // 1. Tìm thông tin pet trước khi xóa
+        Pet pet = repository.findById(maPet)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy thú cưng mã: " + maPet));
+
+        // 2. Giải phóng chuồng (nếu pet đang ở trong chuồng)
+        if (pet.getChuong() != null) {
+            Chuong chuong = pet.getChuong();
+            chuong.setTrangThai(TrangThaiChuong.TRONG); //
+            chuongRepository.save(chuong);
+        }
+
+        // 3. Thực hiện xóa
+        // Lưu ý: Các bảng liên quan như PET_IMAGE hoặc LICHSU_SUC_KHOE
+        // sẽ tự động xóa nếu bạn đã cấu hình cascade = CascadeType.ALL.
+        repository.delete(pet);
     }
 }

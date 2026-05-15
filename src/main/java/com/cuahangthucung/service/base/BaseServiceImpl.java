@@ -1,5 +1,6 @@
 package com.cuahangthucung.service.base;
 
+import com.cuahangthucung.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -49,7 +50,7 @@ public abstract class BaseServiceImpl<T, ID, R extends JpaRepository<T, ID> & Jp
     public T update(ID id, T entity) {
         // Kiểm tra xem ID có tồn tại không trước khi update
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Không tìm thấy bản ghi với ID: " + id);
+            throw new ResourceNotFoundException("Không tìm thấy bản ghi với ID: " + id);
         }
         // Lưu ý: Logic cụ thể của update thường sẽ được ghi đè (Override)
         // ở các Service con nếu cần xử lý phức tạp hơn
@@ -60,7 +61,7 @@ public abstract class BaseServiceImpl<T, ID, R extends JpaRepository<T, ID> & Jp
     @Transactional
     public void deleteById(ID id) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Không tìm thấy bản ghi để xóa với ID: " + id);
+            throw new ResourceNotFoundException("Không tìm thấy bản ghi để xóa với ID: " + id);
         }
         repository.deleteById(id);
     }

@@ -7,6 +7,10 @@ import com.cuahangthucung.controller.base.BaseController;
 import com.cuahangthucung.dto.pet.*;
 import com.cuahangthucung.service.pet.PetImageService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,9 +39,18 @@ public class PetImageController extends BaseController {
      * Hỗ trợ lọc theo: maImg, maPet, ngayCuThe
      */
     @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> search(PetImageSearchRequest request) {
-        List<PetImageDTO> list = petImageService.search(request);
-        return resSuccess(list, "Tìm kiếm danh sách hình ảnh thành công");
+    public ResponseEntity<Page<PetImageDTO>> search(
+            PetImageSearchRequest request,
+            @PageableDefault(sort = "maImg", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        // Sử dụng Specification để lọc
+        var spec = com.cuahangthucung.repository.pet.PetImageSpecification.getFilter(request);
+
+        // Gọi hàm findAll hỗ trợ phân trang từ BaseService
+        Page<PetImage> resultPage = petImageService.findAll(spec, pageable);
+
+        // Chuyển đổi sang DTO thông qua Method Reference (Yêu cầu convertToDTO phải là public)
+        return ResponseEntity.ok(resultPage.map(petImageService::convertToDTO));
     }
 
     /**

@@ -5,6 +5,11 @@ import com.cuahangthucung.dto.pet.*;
 import com.cuahangthucung.service.pet.PetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 
 import com.cuahangthucung.controller.base.BaseController;
@@ -29,17 +34,36 @@ public class PetController {
     public ResponseEntity<List<PetDTO>> getAll() {
         return ResponseEntity.ok(petService.findAllDTO());
     }
+    /**
+     * 1. Tìm kiếm, Lọc và Sắp xếp động
+     */
+    @GetMapping("/search")
+    public ResponseEntity<Page<PetDTO>> search( // <--- THAY ĐỔI: Trả về Page thay vì List
+                                                PetSearchRequest request,
+                                                @PageableDefault(sort = "maPet", direction = Sort.Direction.DESC) Pageable pageable // <--- THAY ĐỔI: Thêm đối tượng Pageable
+    ) {
+        // Gọi hàm findAll từ BaseService đã hỗ trợ sẵn Spec và Pageable
+        Page<Pet> resultPage = petService.findAll(
+                com.cuahangthucung.repository.pet.PetSpecification.getFilter(request),
+                pageable // <--- THAY ĐỔI: Truyền pageable vào hàm tìm kiếm
+        );
+
+        // Chuyển đổi Page<Entity> sang Page<DTO> bằng hàm map của Page
+        Page<PetDTO> dtoPage = resultPage.map(petService::convertToDTO); // <--- THAY ĐỔI: Sử dụng .map() để convert
+
+        return ResponseEntity.ok(dtoPage);
+    }
 
     /**
      * 1. Tìm kiếm và lọc thú cưng
      * Ví dụ: GET /api/pets/search?tenPet=Lu&giong=Corgi
-     */
+     *//*
     @GetMapping("/search")
     public ResponseEntity<List<PetDTO>> search(PetSearchRequest request) {
         List<PetDTO> result = petService.search(request);
         return ResponseEntity.ok(result);
     }
-
+*/
     /**
      * 2. Lấy thông tin chi tiết một thú cưng
      */

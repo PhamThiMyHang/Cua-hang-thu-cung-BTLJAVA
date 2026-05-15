@@ -6,6 +6,10 @@ import com.cuahangthucung.dto.pet.*; // Hoặc dto.pet.* tùy cấu trúc folder
 import com.cuahangthucung.dto.pet.LoaiChuongRequest;
 import com.cuahangthucung.service.pet.LoaiChuongService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,14 +36,25 @@ public class LoaiChuongController extends BaseController {
     /**
      * 1. Lọc động danh mục loại chuồng
      */
+    /**
+     * 1. Lọc động và PHÂN TRANG danh mục loại chuồng
+     */
     @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> search(LoaiChuongSearchRequest request) {
-        List<LoaiChuongDTO> list = loaiChuongService.search(request);
-        return resSuccess(list, "Tìm kiếm loại chuồng thành công");
+    public ResponseEntity<?> search(
+            LoaiChuongSearchRequest request,
+            @PageableDefault(sort = "tenLoai", direction = Sort.Direction.ASC) Pageable pageable
+    ) {
+        var spec = com.cuahangthucung.repository.pet.LoaiChuongSpecification.getFilter(request);
+        Page<LoaiChuong> resultPage = loaiChuongService.findAll(spec, pageable);
+
+        // Map sang DTO sử dụng hàm public convertToDTO
+        Page<LoaiChuongDTO> dtoPage = resultPage.map(loaiChuongService::convertToDTO);
+
+        return resSuccess(dtoPage, "Tìm kiếm loại chuồng thành công");
     }
 
     /**
-     * 2. Lấy tất cả (Dùng DTO để có thông tin soChuongConTrong)
+     * 2. Lấy tất cả (Dùng   DTO để có thông tin soChuongConTrong)
      */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAll() {

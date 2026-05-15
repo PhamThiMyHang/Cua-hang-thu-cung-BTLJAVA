@@ -2,6 +2,7 @@ package com.cuahangthucung.service.pet;
 
 import com.cuahangthucung.dto.pet.*;
 import com.cuahangthucung.entity.pet.entity.PetImage;
+import com.cuahangthucung.exception.ResourceNotFoundException;
 import com.cuahangthucung.repository.pet.PetImageRepository;
 import com.cuahangthucung.repository.pet.PetImageSpecification;
 import com.cuahangthucung.repository.pet.PetRepository; // Cần tiêm thêm để tìm Pet
@@ -44,11 +45,21 @@ public class PetImageServiceImpl extends BaseServiceImpl<PetImage, Integer, PetI
 
         BeanUtils.copyProperties(request, entity);
 
-        // Gán Pet từ mã pet gửi lên
-        if (request.getMaPet() != null) {
+        // Xử lý gắn Pet linh hoạt
+        if (request.getMaPet() != null && !request.getMaPet().isBlank()) {
+            // Ưu tiên tìm theo mã Pet
             var pet = petRepository.findById(request.getMaPet())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy thú cưng"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy thú cưng với mã: " + request.getMaPet()));
             entity.setPet(pet);
+        }
+        else if (request.getTenPet() != null && !request.getTenPet().isBlank()) {
+            // Nếu không có mã, tìm theo tên Pet
+            var pet = petRepository.findByTenPet(request.getTenPet())
+                    .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy thú cưng với tên: " + request.getTenPet()));
+            entity.setPet(pet);
+        }
+        else {
+            throw new RuntimeException("Vui lòng cung cấp mã hoặc tên thú cưng để lưu ảnh.");
         }
 
         return convertToDTO(repository.save(entity));
@@ -92,7 +103,8 @@ public class PetImageServiceImpl extends BaseServiceImpl<PetImage, Integer, PetI
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy ảnh mã: " + id));
     }
 
-    private PetImageDTO convertToDTO(PetImage entity) {
+    @Override
+    public PetImageDTO convertToDTO(PetImage entity) {
         PetImageDTO dto = new PetImageDTO();
         BeanUtils.copyProperties(entity, dto);
         if (entity.getPet() != null) {
