@@ -12,11 +12,9 @@ public class PetImageRequest {
 
     @NotBlank(message = "Mã thú cưng không được để trống")
     private String maPet;
-<<<<<<< HEAD
 
     // Thêm trường tên pet
     private String tenPet;
 
-=======
->>>>>>> DoanThiNgocGiau
+
 }

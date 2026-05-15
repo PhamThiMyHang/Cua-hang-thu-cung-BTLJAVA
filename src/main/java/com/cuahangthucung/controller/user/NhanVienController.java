@@ -2,6 +2,7 @@ package com.cuahangthucung.controller.user;
 
 import com.cuahangthucung.controller.base.BaseController;
 import com.cuahangthucung.dto.user.*;
+import com.cuahangthucung.entity.user.entity.NhanVien;
 import com.cuahangthucung.service.user.NhanVienService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

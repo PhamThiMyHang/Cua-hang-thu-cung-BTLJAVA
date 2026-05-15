@@ -89,7 +89,6 @@ public class Pet {
     @ToString.Exclude
     @JsonIgnore
     private List<LichSuSucKhoe> lichSuSucKhoe;
-
 	public String getMaPet() {
 		return maPet;
 	}

@@ -9,8 +9,7 @@ public class LichSuSearchRequest {
     private String loai; // Vaccine, Benh, Kham
     private String tuKhoa; // Tìm trong MoTa
     private LocalDate ngay;
-<<<<<<< HEAD
+
     private String tenPet;
-=======
->>>>>>> DoanThiNgocGiau
+
 }
