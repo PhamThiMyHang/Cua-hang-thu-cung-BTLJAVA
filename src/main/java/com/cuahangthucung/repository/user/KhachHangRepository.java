@@ -20,12 +20,12 @@ public interface KhachHangRepository extends JpaRepository<KhachHang, Integer>, 
     Optional<KhachHang> findBySdt(String sdt);
 
     boolean existsBySdt(String sdt);
-
+/* bỏ
     @Query("SELECT k FROM KhachHang k ORDER BY k.maKH DESC LIMIT 1")
     Optional<KhachHang> findLastKhachHang();
-
+*/
     /*  Pham Thi My Hang sua0*/
-    // KhachHangRepository.java
-    @Query("SELECT k FROM KhachHang k WHERE k.maKH_String LIKE :prefix% ORDER BY k.maKH_String DESC LIMIT 1")
-    Optional<KhachHang> findLastKhachHangByPrefix(@Param("prefix") String prefix);
+    // Sửa lại hàm này: Lấy khách hàng có ID (Integer) cao nhất
+    @Query("SELECT k FROM KhachHang k ORDER BY k.maKH DESC LIMIT 1")
+    Optional<KhachHang> findLastKhachHang();
 }

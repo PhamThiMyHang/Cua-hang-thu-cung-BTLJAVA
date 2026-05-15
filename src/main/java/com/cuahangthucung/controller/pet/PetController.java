@@ -25,6 +25,11 @@ public class PetController {
 
     private final PetService petService;
 
+    @GetMapping
+    public ResponseEntity<List<PetDTO>> getAll() {
+        return ResponseEntity.ok(petService.findAllDTO());
+    }
+
     /**
      * 1. Tìm kiếm và lọc thú cưng
      * Ví dụ: GET /api/pets/search?tenPet=Lu&giong=Corgi
@@ -56,12 +61,23 @@ public class PetController {
     /**
      * 4. Cập nhật   thông tin thú cưng
      */
+    /*
     @PutMapping("/{maPet}")
     public ResponseEntity<PetDTO> update(
             @PathVariable String maPet,
             @Valid @RequestBody PetRequest request) {
         request.setMaPet(maPet);
         return ResponseEntity.ok(petService.saveRequest(request));
+    }
+*/
+    @PutMapping("/{maPet}")
+    public ResponseEntity<PetDTO> update(
+            @PathVariable String maPet,
+            @RequestBody PetRequest request) {
+        // Gán mã từ URL vào request để service biết đang cập nhật cho thú cưng nào
+        request.setMaPet(maPet);
+        PetDTO updatedPet = petService.saveRequest(request);
+        return ResponseEntity.ok(updatedPet);
     }
 
     /**
@@ -89,50 +105,5 @@ public class PetController {
     public ResponseEntity<String> getNextMaPet() {
         return ResponseEntity.ok(petService.generateNextMaPet());
     }
-        /*
-=======
-import java.util.Map;
 
-@RestController
-@RequestMapping("/api/pets")
-@CrossOrigin("*") // Cho phép Frontend gọi API từ domain khác
-public class PetController extends BaseController {
-
-    private final PetService petService;
-
-    public PetController(PetService petService) {
-        this.petService = petService;
-    }
-
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> getAll() {
-        List<Pet> list = petService.findAll();
-        return resSuccess(list, "Lấy danh sách thú cưng thành công");
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getById(@PathVariable String id) {
-        return petService.findById(id)
-                .map(pet -> resSuccess(pet, "Tìm thấy thú cưng"))
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<Map<String, Object>> create(@RequestBody Pet pet) {
-        Pet savedPet = petService.save(pet);
-        return resCreated(savedPet, "Thêm mới thú cưng thành công");
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> update(@PathVariable String id, @RequestBody Pet pet) {
-        Pet updatedPet = petService.update(id, pet);
-        return resSuccess(updatedPet, "Cập nhật thông tin thành công");
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> delete(@PathVariable String id) {
-        petService.deleteById(id);
-        return resSuccess(null, "Xóa thú cưng thành công");
->>>>>>> DoanThiNgocGiau
-    */
 }

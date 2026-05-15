@@ -47,13 +47,20 @@ public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> 
         if (request.getMaPet() != null && !request.getMaPet().trim().isEmpty()) {
             pet = repository.findById(request.getMaPet())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy thú cưng mã: " + request.getMaPet()));
+            // Nếu thay đổi chuồng, hãy giải phóng chuồng cũ
+            if (pet.getChuong() != null && !pet.getChuong().getMaChuong().equals(request.getMaChuong())) {
+                Chuong chuongCu = pet.getChuong();
+                chuongCu.setTrangThai(TrangThaiChuong.TRONG);
+                chuongRepository.save(chuongCu);
+            }
         } else {
             pet = new Pet();
-            pet.setMaPet(generateNextMaPet()); // Sinh mã cho pet mới
+            String newId = generateNextMaPet(); // Sinh mã (VD: P260501)
+            pet.setMaPet(newId);               // Gán trực tiếp vào Entity để tránh lỗi 'ma_pet' null
         }
 
         // 2. Copy dữ liệu cơ bản (Tên, Giống, Tuổi, Gia, CanNang, TinhTrang, NgayTra)
-        BeanUtils.copyProperties(request, pet, "maPet"); // Không copy đè mã pet
+        BeanUtils.copyProperties(request, pet, "maPet", "chuong", "maKH", "maNV"); // Không copy đè mã pet
 
         // 3. Mapping Quan hệ: Chuồng (Chuong)
         if (request.getMaChuong() != null) {
@@ -167,5 +174,11 @@ public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> 
         return pet.getLichSuSucKhoe().stream()
                 .anyMatch(ls -> ls.getLoai().name().equals("Benh"));
 
+    }
+
+    /*Them chức năng*/
+    @Override
+    public List<PetDTO> findAllDTO() {
+        return repository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 }

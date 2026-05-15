@@ -20,7 +20,12 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Integer>, Jp
     Optional<NhanVien> findBySdt(String sdt);
 
     boolean existsBySdt(String sdt);
-
+    // Lấy nhân viên có ID lớn nhất
     @Query("SELECT n FROM NhanVien n ORDER BY n.maNV DESC LIMIT 1")
     Optional<NhanVien> findLastNhanVien();
+/*
+    @Query("SELECT n FROM NhanVien n ORDER BY n.maNV DESC LIMIT 1")
+    Optional<NhanVien> findLastNhanVien();
+ */
+
 }

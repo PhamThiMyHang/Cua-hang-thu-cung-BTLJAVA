@@ -30,7 +30,7 @@ public class KhachHangServiceImpl extends BaseServiceImpl<KhachHang, Integer, Kh
     public boolean existsBySdt(String sdt) {
         return repository.existsBySdt(sdt);
     }
-
+/*
     @Override
     public String generateNextMaKH() {
         String prefix = "KH" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyMM"));
@@ -42,5 +42,16 @@ public class KhachHangServiceImpl extends BaseServiceImpl<KhachHang, Integer, Kh
                     return String.format("%s%03d", prefix, lastNumber + 1);
                 })
                 .orElse(prefix + "001");
+    }
+
+
+ */
+    @Override
+    public String generateNextMaKH() {
+        // Nếu bạn vẫn muốn trả về String cho Frontend hiển thị,
+        // chỉ cần lấy ID lớn nhất hiện tại cộng thêm 1.
+        return repository.findLastKhachHang()
+                .map(last -> String.valueOf(last.getMaKH() + 1))
+                .orElse("1"); // Nếu chưa có khách nào thì bắt đầu từ 1
     }
 }

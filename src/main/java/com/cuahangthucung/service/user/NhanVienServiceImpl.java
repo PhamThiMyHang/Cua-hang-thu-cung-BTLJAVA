@@ -33,15 +33,9 @@ public class NhanVienServiceImpl extends BaseServiceImpl<NhanVien, Integer, Nhan
 
     @Override
     public String generateNextMaNV() {
-        String prefix = "NV" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyMM"));
-        
-        return repository.findLastNhanVienByPrefix(prefix)
-                .map(last -> {
-                    String lastMa = last.getMaNV().toString(); // giả sử MaNV là Integer, cần convert
-                    // Hoặc bạn có thể thay đổi query để trả về String nếu cần
-                    int lastNumber = Integer.parseInt(lastMa.substring(6));
-                    return String.format("%s%03d", prefix, lastNumber + 1);
-                })
-                .orElse(prefix + "001");
+        // Chỉ đơn giản là lấy ID cuối + 1
+        return repository.findLastNhanVien()
+                .map(last -> String.valueOf(last.getMaNV() + 1))
+                .orElse("1"); // Nếu chưa có nv nào thì bắt đầu từ 1
     }
 }

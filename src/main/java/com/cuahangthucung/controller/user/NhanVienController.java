@@ -37,11 +37,18 @@ public class NhanVienController extends BaseController {
                 .map(nv -> resSuccess(nv, "Tìm thấy nhân viên"))
                 .orElse(ResponseEntity.notFound().build());
     }
-
+/* bỏ
     @PostMapping
     public ResponseEntity<Map<String, Object>> create(@RequestBody NhanVien nhanVien) {
         NhanVien saved = nhanVienService.save(nhanVien);
         return resCreated(saved, "Thêm nhân viên thành công");
+    }
+*/
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> create(@RequestBody NhanVien nhanVien) {
+        // KHÔNG cần set MaNV thủ công, DB sẽ tự tăng
+        NhanVien saved = nhanVienService.save(nhanVien);
+        return resCreated(saved, "Thêm nhân viên thành công với ID: " + saved.getMaNV());
     }
 
     @PutMapping("/{id}")
