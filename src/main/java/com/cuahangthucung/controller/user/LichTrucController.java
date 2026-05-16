@@ -4,6 +4,10 @@ import com.cuahangthucung.controller.base.BaseController;
 import com.cuahangthucung.dto.user.*;
 import com.cuahangthucung.service.user.LichTrucService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,11 +19,11 @@ import java.util.Map;
  * =============================================
  * Quản lý lịch trực nhân viên
  * Liên kết với bảng: NhanVien
- * Có kiểm tra trùng lịch (một nhân viên không thể trực 2 ca cùng ngày)
+ * Có kiểm tra trùng lịch (1 nhân viên không trực 2 ca cùng ngày)
  */
 @RestController
 @RequestMapping("/api/lich-truc")
-
+@CrossOrigin("*")
 public class LichTrucController extends BaseController {
 
     private final LichTrucService lichTrucService;
@@ -29,44 +33,36 @@ public class LichTrucController extends BaseController {
     }
 
     /**
-     * Tìm kiếm lịch trực
-     * Hỗ trợ: mã nhân viên, ngày, ca làm việc, khoảng thời gian
+     * TÌM KIẾM + LỌC + PHÂN TRANG + SẮP XẾP ĐỘNG
+     *
+     * Ví dụ: GET /api/lich-truc/search?maNV=5&ngay=2025-05-16&caLamViec=SANG
+     *        &tuNgay=2025-05-01&denNgay=2025-05-31&sortBy=ngay&sortDir=desc
      */
     @GetMapping("/search")
-    public ResponseEntity<?> search(LichTrucSearchRequest request) {
-        var result = lichTrucService.search(request);
-        return resSuccess(result, "Tìm kiếm lịch trực thành công");
+    public ResponseEntity<Map<String, Object>> search(
+            LichTrucSearchRequest request,
+            @PageableDefault(size = 10, sort = "ngay", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        Page<LichTrucDTO> resultPage = lichTrucService.search(request, pageable);
+        return resSuccess(resultPage, "Tìm kiếm lịch trực thành công");
     }
 
-    /**
-     * Lấy tất cả lịch trực
-     */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAll() {
-        return resSuccess(lichTrucService.findAllDTO(), "Lấy toàn bộ lịch trực thành công");
+        return resSuccess(lichTrucService.findAllDTO(), "Lấy toàn bộ danh sách lịch trực thành công");
     }
 
-    /**
-     * Lấy chi tiết một lịch trực theo ID
-     */
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getById(@PathVariable Integer id) {
         return resSuccess(lichTrucService.findByIdDTO(id), "Tìm thấy lịch trực mã: " + id);
     }
 
-    /**
-     * Tạo mới lịch trực cho nhân viên
-     * Service sẽ kiểm tra trùng ca trước khi lưu
-     */
     @PostMapping
     public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody LichTrucRequest request) {
         LichTrucDTO saved = lichTrucService.saveRequest(request);
         return resCreated(saved, "Tạo lịch trực thành công");
     }
 
-    /**
-     * Cập nhật lịch trực
-     */
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> update(
             @PathVariable Integer id,
@@ -76,9 +72,6 @@ public class LichTrucController extends BaseController {
         return resSuccess(updated, "Cập nhật lịch trực thành công");
     }
 
-    /**
-     * Xóa lịch trực
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Integer id) {
         lichTrucService.deleteById(id);

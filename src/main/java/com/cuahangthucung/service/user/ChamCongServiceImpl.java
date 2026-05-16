@@ -6,6 +6,8 @@ import com.cuahangthucung.repository.user.ChamCongRepository;
 import com.cuahangthucung.repository.user.ChamCongSpecification;
 import com.cuahangthucung.service.base.BaseServiceImpl;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ChamCongServiceImpl extends BaseServiceImpl<ChamCong, Integer, ChamCongRepository> implements ChamCongService {
+public class ChamCongServiceImpl extends BaseServiceImpl<ChamCong, Integer, ChamCongRepository> 
+        implements ChamCongService {
 
     public ChamCongServiceImpl(ChamCongRepository repository) {
         super(repository);
@@ -28,13 +31,19 @@ public class ChamCongServiceImpl extends BaseServiceImpl<ChamCong, Integer, Cham
     }
 
     @Override
+    public Page<ChamCongDTO> search(ChamCongSearchRequest request, Pageable pageable) {
+        return repository.findAll(ChamCongSpecification.getFilter(request), pageable)
+                .map(this::convertToDTO);
+    }
+
+    @Override
     @Transactional
     public ChamCongDTO saveRequest(ChamCongRequest request) {
         ChamCong cc = (request.getMaCC() != null)
                 ? repository.findById(request.getMaCC()).orElse(new ChamCong())
                 : new ChamCong();
 
-        BeanUtils.copyProperties(request, cc);
+        BeanUtils.copyProperties(request, cc, "nhanVien"); // ignore quan hệ để tránh lỗi
         return convertToDTO(repository.save(cc));
     }
 
@@ -54,7 +63,7 @@ public class ChamCongServiceImpl extends BaseServiceImpl<ChamCong, Integer, Cham
 
     @Override
     public ChamCongSummaryDTO getSummary(ChamCongSearchRequest request) {
-        // Có thể mở rộng sau
+        // TODO: Có thể triển khai logic thống kê thực tế sau
         return new ChamCongSummaryDTO();
     }
 

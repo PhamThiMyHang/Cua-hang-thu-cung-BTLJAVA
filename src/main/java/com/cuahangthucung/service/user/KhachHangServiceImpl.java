@@ -6,6 +6,8 @@ import com.cuahangthucung.repository.user.KhachHangRepository;
 import com.cuahangthucung.repository.user.KhachHangSpecification;
 import com.cuahangthucung.service.base.BaseServiceImpl;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class KhachHangServiceImpl extends BaseServiceImpl<KhachHang, Integer, KhachHangRepository> implements KhachHangService {
+public class KhachHangServiceImpl extends BaseServiceImpl<KhachHang, Integer, KhachHangRepository> 
+        implements KhachHangService {
 
     public KhachHangServiceImpl(KhachHangRepository repository) {
         super(repository);
@@ -28,13 +31,19 @@ public class KhachHangServiceImpl extends BaseServiceImpl<KhachHang, Integer, Kh
     }
 
     @Override
+    public Page<KhachHangDTO> search(KhachHangSearchRequest request, Pageable pageable) {
+        return repository.findAll(KhachHangSpecification.getFilter(request), pageable)
+                .map(this::convertToDTO);
+    }
+
+    @Override
     @Transactional
     public KhachHangDTO saveRequest(KhachHangRequest request) {
         KhachHang kh = (request.getMaKH() != null)
                 ? repository.findById(request.getMaKH()).orElse(new KhachHang())
                 : new KhachHang();
 
-        BeanUtils.copyProperties(request, kh);
+        BeanUtils.copyProperties(request, kh, "user"); // ignore quan hệ
         return convertToDTO(repository.save(kh));
     }
 
@@ -57,7 +66,7 @@ public class KhachHangServiceImpl extends BaseServiceImpl<KhachHang, Integer, Kh
         return new KhachHangSummaryDTO(
                 repository.countTotalKhachHang(),
                 repository.countKhachVIP(),
-                repository.count() - repository.countKhachVIP(), // THUONG + others
+                repository.count() - repository.countKhachVIP(),
                 repository.sumDiemTichLuy()
         );
     }
@@ -78,14 +87,10 @@ public class KhachHangServiceImpl extends BaseServiceImpl<KhachHang, Integer, Kh
         return dto;
     }
 
-
-
     @Override
     public String generateNextMaKH() {
-        // Nếu bạn vẫn muốn trả về String cho Frontend hiển thị,
-        // chỉ cần lấy ID lớn nhất hiện tại cộng thêm 1.
         return repository.findLastKhachHang()
                 .map(last -> String.valueOf(last.getMaKH() + 1))
-                .orElse("1"); // Nếu chưa có khách nào thì bắt đầu từ 1
+                .orElse("1");
     }
 }

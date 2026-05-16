@@ -4,6 +4,10 @@ import com.cuahangthucung.controller.base.BaseController;
 import com.cuahangthucung.dto.user.*;
 import com.cuahangthucung.service.user.HoSoNhanVienService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,52 +33,45 @@ public class HoSoNhanVienController extends BaseController {
     }
 
     /**
-     * Tìm kiếm hồ sơ nhân viên
-     * Hỗ trợ: theo mã nhân viên, từ khóa (bằng cấp, trình độ, kinh nghiệm)
+     * TÌM KIẾM + LỌC + PHÂN TRANG + SẮP XẾP ĐỘNG
+     *
+     * Ví dụ: GET /api/ho-so-nhan-vien/search?maNV=5&keyword=Đại học
+     *        &sortBy=trinhDo&sortDir=asc&page=0&size=10
      */
     @GetMapping("/search")
-    public ResponseEntity<?> search(HoSoNhanVienSearchRequest request) {
-        var result = hoSoNhanVienService.search(request);
-        return resSuccess(result, "Tìm kiếm hồ sơ nhân viên thành công");
+    public ResponseEntity<Map<String, Object>> search(
+            HoSoNhanVienSearchRequest request,
+            @PageableDefault(size = 10, sort = "maHoSo", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        Page<HoSoNhanVienDTO> resultPage = hoSoNhanVienService.search(request, pageable);
+        return resSuccess(resultPage, "Tìm kiếm hồ sơ nhân viên thành công");
     }
 
-    /**
-     * Lấy tất cả hồ sơ nhân viên
-     */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAll() {
         return resSuccess(hoSoNhanVienService.findAllDTO(), "Lấy toàn bộ danh sách hồ sơ nhân viên thành công");
     }
 
-    /**
-     * Lấy chi tiết hồ sơ theo ID
-     */
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getById(@PathVariable Integer id) {
         return resSuccess(hoSoNhanVienService.findByIdDTO(id), "Tìm thấy hồ sơ mã: " + id);
     }
 
     /**
-     * Lấy hồ sơ theo mã nhân viên (API rất hay dùng)
+     * Lấy hồ sơ theo mã nhân viên (API rất hữu ích)
      */
     @GetMapping("/nhan-vien/{maNV}")
     public ResponseEntity<Map<String, Object>> getByMaNV(@PathVariable Integer maNV) {
-        return resSuccess(hoSoNhanVienService.findByMaNV(maNV), 
-                "Tìm thấy hồ sơ của nhân viên mã: " + maNV);
+        HoSoNhanVienDTO hoSo = hoSoNhanVienService.findByMaNV(maNV);
+        return resSuccess(hoSo, "Tìm thấy hồ sơ của nhân viên mã: " + maNV);
     }
 
-    /**
-     * Tạo mới hồ sơ cho nhân viên
-     */
     @PostMapping
     public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody HoSoNhanVienRequest request) {
         HoSoNhanVienDTO saved = hoSoNhanVienService.saveRequest(request);
         return resCreated(saved, "Tạo hồ sơ nhân viên thành công");
     }
 
-    /**
-     * Cập nhật hồ sơ nhân viên
-     */
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> update(
             @PathVariable Integer id,
@@ -84,9 +81,6 @@ public class HoSoNhanVienController extends BaseController {
         return resSuccess(updated, "Cập nhật hồ sơ nhân viên thành công");
     }
 
-    /**
-     * Xóa hồ sơ nhân viên
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Integer id) {
         hoSoNhanVienService.deleteById(id);

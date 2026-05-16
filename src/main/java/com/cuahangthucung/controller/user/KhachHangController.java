@@ -4,6 +4,10 @@ import com.cuahangthucung.controller.base.BaseController;
 import com.cuahangthucung.dto.user.*;
 import com.cuahangthucung.service.user.KhachHangService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +18,8 @@ import java.util.Map;
  * KHACHHANG CONTROLLER
  * =============================================
  * Quản lý thông tin Khách hàng
- * Liên kết với: User (tài khoản), Pet (thú cưng)
- * Chức năng quan trọng: quản lý điểm tích lũy, phân loại khách VIP/Thường
+ * Liên kết với: User (tài khoản)
+ * Chức năng: quản lý điểm tích lũy, phân loại VIP/Thường...
  */
 @RestController
 @RequestMapping("/api/khach-hang")
@@ -29,44 +33,36 @@ public class KhachHangController extends BaseController {
     }
 
     /**
-     * Tìm kiếm khách hàng theo nhiều tiêu chí
-     * Hỗ trợ: tên, số điện thoại, loại khách hàng (VIP, THƯỜNG, SI, LE), điểm tích lũy
+     * TÌM KIẾM + LỌC + PHÂN TRANG + SẮP XẾP ĐỘNG
+     *
+     * Ví dụ: GET /api/khach-hang/search?tenKH=Nguyễn&sdt=0123&loaiKH=VIP&keyword=abc
+     *        &sortBy=tenKH&sortDir=asc&page=0&size=10
      */
     @GetMapping("/search")
-    public ResponseEntity<?> search(KhachHangSearchRequest request) {
-        var result = khachHangService.search(request);
-        return resSuccess(result, "Tìm kiếm khách hàng thành công");
+    public ResponseEntity<Map<String, Object>> search(
+            KhachHangSearchRequest request,
+            @PageableDefault(size = 10, sort = "maKH", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        Page<KhachHangDTO> resultPage = khachHangService.search(request, pageable);
+        return resSuccess(resultPage, "Tìm kiếm khách hàng thành công");
     }
 
-    /**
-     * Lấy toàn bộ danh sách khách hàng
-     */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAll() {
         return resSuccess(khachHangService.findAllDTO(), "Lấy toàn bộ danh sách khách hàng thành công");
     }
 
-    /**
-     * Lấy thông tin chi tiết một khách hàng
-     */
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getById(@PathVariable Integer id) {
         return resSuccess(khachHangService.findByIdDTO(id), "Tìm thấy khách hàng mã: " + id);
     }
 
-    /**
-     * Thêm mới khách hàng
-     * Có thể liên kết với UserID nếu khách hàng có tài khoản
-     */
     @PostMapping
     public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody KhachHangRequest request) {
         KhachHangDTO saved = khachHangService.saveRequest(request);
         return resCreated(saved, "Thêm khách hàng mới thành công");
     }
 
-    /**
-     * Cập nhật thông tin khách hàng
-     */
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> update(
             @PathVariable Integer id,
@@ -76,16 +72,11 @@ public class KhachHangController extends BaseController {
         return resSuccess(updated, "Cập nhật thông tin khách hàng thành công");
     }
 
-    /**
-     * Xóa khách hàng
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> delete(@PathVariable Integer id) {
         khachHangService.deleteById(id);
         return resSuccess(null, "Xóa khách hàng thành công");
     }
-
-
 
 
     @GetMapping("/summary")

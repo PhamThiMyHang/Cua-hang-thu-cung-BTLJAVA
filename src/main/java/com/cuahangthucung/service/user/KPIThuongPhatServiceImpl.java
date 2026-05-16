@@ -6,6 +6,8 @@ import com.cuahangthucung.repository.user.KPIThuongPhatRepository;
 import com.cuahangthucung.repository.user.KPIThuongPhatSpecification;
 import com.cuahangthucung.service.base.BaseServiceImpl;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class KPIThuongPhatServiceImpl extends BaseServiceImpl<KPIThuongPhat, Integer, KPIThuongPhatRepository> implements KPIThuongPhatService {
+public class KPIThuongPhatServiceImpl extends BaseServiceImpl<KPIThuongPhat, Integer, KPIThuongPhatRepository> 
+        implements KPIThuongPhatService {
 
     public KPIThuongPhatServiceImpl(KPIThuongPhatRepository repository) {
         super(repository);
@@ -29,13 +32,19 @@ public class KPIThuongPhatServiceImpl extends BaseServiceImpl<KPIThuongPhat, Int
     }
 
     @Override
+    public Page<KPIThuongPhatDTO> search(KPIThuongPhatSearchRequest request, Pageable pageable) {
+        return repository.findAll(KPIThuongPhatSpecification.getFilter(request), pageable)
+                .map(this::convertToDTO);
+    }
+
+    @Override
     @Transactional
     public KPIThuongPhatDTO saveRequest(KPIThuongPhatRequest request) {
         KPIThuongPhat kpi = (request.getMaKPI() != null)
                 ? repository.findById(request.getMaKPI()).orElse(new KPIThuongPhat())
                 : new KPIThuongPhat();
 
-        BeanUtils.copyProperties(request, kpi);
+        BeanUtils.copyProperties(request, kpi, "nhanVien"); // ignore quan hệ
         return convertToDTO(repository.save(kpi));
     }
 
@@ -58,8 +67,13 @@ public class KPIThuongPhatServiceImpl extends BaseServiceImpl<KPIThuongPhat, Int
         BigDecimal tongThuong = repository.sumThuongByThang(thang);
         BigDecimal tongPhat = repository.sumPhatByThang(thang);
 
-        return new KPIThuongPhatSummaryDTO(thang, tongThuong, tongPhat, 
-                tongThuong.subtract(tongPhat), 0L);
+        return new KPIThuongPhatSummaryDTO(
+                thang, 
+                tongThuong, 
+                tongPhat, 
+                tongThuong.subtract(tongPhat), 
+                0L
+        );
     }
 
     private KPIThuongPhatDTO convertToDTO(KPIThuongPhat entity) {
