@@ -6,9 +6,13 @@ import com.cuahangthucung.entity.pet.entity.Chuong;
 
 import com.cuahangthucung.entity.pet.entity.Pet;
 import com.cuahangthucung.entity.pet.enums.TrangThaiChuong;
+import com.cuahangthucung.entity.user.entity.KhachHang;
+import com.cuahangthucung.entity.user.entity.NhanVien;
 import com.cuahangthucung.repository.pet.ChuongRepository;
 import com.cuahangthucung.repository.pet.PetRepository;
 import com.cuahangthucung.repository.pet.PetSpecification;
+import com.cuahangthucung.repository.user.KhachHangRepository;
+import com.cuahangthucung.repository.user.NhanVienRepository;
 import com.cuahangthucung.service.base.BaseServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -24,10 +28,17 @@ import java.util.stream.Collectors;
 public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> implements PetService {
 
     private final ChuongRepository chuongRepository;
+    private final NhanVienRepository nhanVienRepository; // Thêm Repository NV
+    private final KhachHangRepository khachHangRepository; // Thêm Repository KH
 
-    public PetServiceImpl(PetRepository repository, ChuongRepository chuongRepository) {
+    public PetServiceImpl(PetRepository repository,
+                          ChuongRepository chuongRepository,
+                          NhanVienRepository nhanVienRepository,
+                          KhachHangRepository khachHangRepository) {
         super(repository);
         this.chuongRepository = chuongRepository;
+        this.nhanVienRepository = nhanVienRepository;
+        this.khachHangRepository = khachHangRepository;
     }
 
     @Override
@@ -61,7 +72,7 @@ public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> 
         }
 
         // 2. Copy dữ liệu cơ bản (Tên, Giống, Tuổi, Gia, CanNang, TinhTrang, NgayTra)
-        BeanUtils.copyProperties(request, pet, "maPet", "chuong", "maKH", "maNV"); // Không copy đè mã pet
+        BeanUtils.copyProperties(request, pet, "maPet", "chuong", "khachHang", "nhanVien"); // Không copy đè mã pet
 
         // 3. Mapping Quan hệ: Chuồng (Chuong)
         if (request.getMaChuong() != null) {
@@ -78,14 +89,18 @@ public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> 
             chuongRepository.save(chuong);
         }
 
-        // 4. Mapping Quan hệ: Khách hàng & Nhân viên
-        // Lưu ý: Vì trong Entity bạn đang để MaKH và MaNV là kiểu Integer (không phải Object)
-        // nên chỉ cần set trực tiếp giá trị ID từ Request.
+        // 4. Mapping Khách hàng (MỚI)
         if (request.getMaKH() != null) {
-            pet.setMaKH(request.getMaKH());
+            KhachHang kh = khachHangRepository.findById(request.getMaKH())
+                    .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại ID: " + request.getMaKH()));
+            pet.setKhachHang(kh);
         }
+
+        // 5. Mapping Nhân viên (MỚI)
         if (request.getMaNV() != null) {
-            pet.setMaNV(request.getMaNV());
+            NhanVien nv = nhanVienRepository.findById(request.getMaNV())
+                    .orElseThrow(() -> new RuntimeException("Nhân viên không tồn tại ID: " + request.getMaNV()));
+            pet.setNhanVien(nv);
         }
 
         // 5. Lưu vào Database
@@ -94,7 +109,6 @@ public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> 
         // 6. Trả về DTO đã được làm phẳng
         return convertToDTO(saved);
     }
-
 
     @Override
     public PetDTO findByIdDTO(String id) {
@@ -141,6 +155,18 @@ public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> 
             if (pet.getChuong().getLoaiChuong() != null) {
                 dto.setTenLoaiChuong(pet.getChuong().getLoaiChuong().getTenLoai());
             }
+        }
+
+        // Map Khách hàng (Flattening)
+        if (pet.getKhachHang() != null) {
+            dto.setMaKH(pet.getKhachHang().getMaKH());
+            dto.setTenKH(pet.getKhachHang().getTenKH());
+        }
+
+        // Map Nhân viên (Flattening)
+        if (pet.getNhanVien() != null) {
+            dto.setMaNV(pet.getNhanVien().getMaNV());
+            dto.setTenNV(pet.getNhanVien().getTenNV());
         }
 
         if (pet.getDanhSachHinhAnh() != null) {

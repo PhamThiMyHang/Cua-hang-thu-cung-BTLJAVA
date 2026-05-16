@@ -1,6 +1,8 @@
 package com.cuahangthucung.entity.pet.entity;
 
 import com.cuahangthucung.entity.pet.enums.TinhTrangPet;
+import com.cuahangthucung.entity.user.entity.KhachHang;
+import com.cuahangthucung.entity.user.entity.NhanVien;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -54,13 +56,17 @@ public class Pet {
     private Chuong chuong;
 
 
-    // Khóa ngoại MaKH (Kiểu INT theo SQL 3/5/2026)
-    @Column(name = "MaKH", nullable = false)
-    private Integer maKH;
+    // QUAN HỆ: Nhiều Pet thuộc về một Khách hàng
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MaKH", nullable = false)
+    @ToString.Exclude
+    private KhachHang khachHang;
 
-    // Khóa ngoại MaNV (Kiểu INT theo SQL 3/5/2026)
-    @Column(name = "MaNV", nullable = false)
-    private Integer maNV;
+    // QUAN HỆ: Nhiều Pet được quản lý bởi một Nhân viên
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MaNV", nullable = false)
+    @ToString.Exclude
+    private NhanVien nhanVien;
 
     /*Bổ sung thêm 2 cột là: NgayGui, NgayTra, NgayGui lấy từ hệ thống ngày nhập, ko để trống, NgayTrả có thể không nhập */
 

@@ -2,8 +2,14 @@ package com.cuahangthucung.controller.user;
 
 import com.cuahangthucung.controller.base.BaseController;
 import com.cuahangthucung.dto.user.*;
+import com.cuahangthucung.entity.user.entity.ChamCong;
+import com.cuahangthucung.repository.user.ChamCongSpecification;
 import com.cuahangthucung.service.user.ChamCongService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,9 +39,18 @@ public class ChamCongController extends BaseController {
      * Hỗ trợ lọc theo: mã nhân viên, ngày chấm công, khoảng thời gian (tuNgay → denNgay)
      */
     @GetMapping("/search")
-    public ResponseEntity<?> search(ChamCongSearchRequest request) {
-        var result = chamCongService.search(request);
-        return resSuccess(result, "Tìm kiếm chấm công thành công");
+    public ResponseEntity<?> search(
+            ChamCongSearchRequest request,
+            @PageableDefault(sort = "ngay", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        // 1. Lấy kết quả phân trang từ Service
+        Page<ChamCong> resultPage = chamCongService.findAll(
+                ChamCongSpecification.getFilter(request),
+                pageable
+        );
+
+        // 2. Map sang DTO và trả về (Cấu trúc chuẩn giống PetController)
+        return resSuccess(resultPage.map(chamCongService::convertToDTO), "Tìm kiếm chấm công thành công");
     }
 
     /**

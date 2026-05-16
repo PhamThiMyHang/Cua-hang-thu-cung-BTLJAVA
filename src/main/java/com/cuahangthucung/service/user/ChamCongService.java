@@ -11,4 +11,5 @@ public interface ChamCongService extends BaseService<ChamCong, Integer> {
     ChamCongDTO findByIdDTO(Integer id);
     List<ChamCongDTO> findAllDTO();
     ChamCongSummaryDTO getSummary(ChamCongSearchRequest request);
+    ChamCongDTO convertToDTO(ChamCong entity);
 }

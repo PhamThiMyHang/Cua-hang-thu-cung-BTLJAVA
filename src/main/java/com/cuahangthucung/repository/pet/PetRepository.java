@@ -32,6 +32,18 @@ public interface PetRepository extends JpaRepository<Pet, String>, JpaSpecificat
     @Query("SELECT COUNT(p) FROM Pet p WHERE p.maPet LIKE :monthPrefix%")
     Long countNewPetsInMonth(@Param("monthPrefix") String monthPrefix);
 
+    // Thống kê số lượng pet của 1 khách hàng (dựa vào ID)
+    @Query("SELECT COUNT(p) FROM Pet p WHERE p.khachHang.maKH = :maKH")
+    Long countByMaKH(@Param("maKH") Integer maKH);
+
+    // Thống kê số lượng pet do 1 nhân viên phụ trách (dựa vào ID)
+    @Query("SELECT COUNT(p) FROM Pet p WHERE p.nhanVien.maNV = :maNV")
+    Long countByMaNV(@Param("maNV") Integer maNV);
+
+    // Thống kê số lượng pet của khách hàng dựa vào TÊN (Tìm kiếm tương đối)
+    @Query("SELECT COUNT(p) FROM Pet p WHERE p.khachHang.tenKH LIKE %:tenKH%")
+    Long countByTenKH(@Param("tenKH") String tenKH);
+
 
 /*15/05/2026 Pham Thi My Hang*/
 

@@ -58,7 +58,8 @@ public class ChamCongServiceImpl extends BaseServiceImpl<ChamCong, Integer, Cham
         return new ChamCongSummaryDTO();
     }
 
-    private ChamCongDTO convertToDTO(ChamCong entity) {
+    @Override
+    public ChamCongDTO convertToDTO(ChamCong entity) {
         ChamCongDTO dto = new ChamCongDTO();
         BeanUtils.copyProperties(entity, dto);
 

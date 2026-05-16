@@ -17,4 +17,8 @@ public interface ChamCongRepository extends JpaRepository<ChamCong, Integer>, Jp
 
     @Query("SELECT COUNT(c) FROM ChamCong c WHERE c.nhanVien.maNV = :maNV AND c.ngay = :ngay")
     Long countByNhanVienAndNgay(@Param("maNV") Integer maNV, @Param("ngay") LocalDate ngay);
+
+    // Tính tổng số giờ làm (Nếu trong Entity có field soGioLam)
+    @Query("SELECT SUM(c.soGioLam) FROM ChamCong c WHERE c.ngay BETWEEN :start AND :end")
+    Double sumSoGioLamByDateRange(@Param("start") LocalDate start, @Param("end") LocalDate end);
 }

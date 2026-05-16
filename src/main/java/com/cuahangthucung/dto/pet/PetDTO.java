@@ -16,9 +16,13 @@ public class PetDTO {
     private Float canNang;
     private String tinhTrang; // Chuyển từ TinhTrangPet (Enum) sang String
 
-    // Thông tin khóa ngoại dạng phẳng (giữ nguyên ID để dễ truy vấn)
+    // Phẳng hóa thông tin Khách hàng
     private Integer maKH;
+    private String tenKH; // Thêm trường này để hiện lên Table/Card
+
+    // Phẳng hóa thông tin Nhân viên
     private Integer maNV;
+    private String tenNV; // Thêm trường này
 
     // Thông tin Chuồng (Lấy từ Object Chuong)
     private String maChuong;

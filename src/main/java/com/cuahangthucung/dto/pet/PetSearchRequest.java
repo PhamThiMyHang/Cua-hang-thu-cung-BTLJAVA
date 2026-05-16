@@ -12,6 +12,14 @@ public class PetSearchRequest {
     private String maChuong;
     private BigDecimal giaMin;
     private BigDecimal giaMax;
+
+    // Thêm các trường này để tìm kiếm theo TÊN
+    private String tenKH;
+    private String tenNV;
+
+    // Vẫn giữ ID để lọc chính xác khi cần
+    private Integer maKH;
+    private Integer maNV;
 /*
     // Hỗ trợ sắp xếp và phân trang
     private String sortBy = "maPet";

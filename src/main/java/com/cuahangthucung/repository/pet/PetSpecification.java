@@ -11,12 +11,19 @@ public class PetSpecification {
     public static Specification<Pet> getFilter(PetSearchRequest request) {
         if (request == null) return null;
 
-        // Sử dụng Specification.allOf() thay cho where() hoặc allOn()
-        // Nó sẽ kết hợp tất cả các Specification bên trong bằng phép AND
         return Specification.allOf(
                 GenericSpecification.fieldContains("tenPet", request.getTenPet()),
                 GenericSpecification.fieldEquals("giong", request.getGiong()),
                 GenericSpecification.fieldEquals("tinhTrang", request.getTinhTrang()),
+
+                // Lọc theo ID (Khóa ngoại)
+                GenericSpecification.fieldEquals("khachHang.maKH", request.getMaKH()),
+                GenericSpecification.fieldEquals("nhanVien.maNV", request.getMaNV()),
+
+                // TÌM KIẾM THEO TÊN (Join bảng)
+                GenericSpecification.fieldContains("khachHang.tenKH", request.getTenKH()),
+                GenericSpecification.fieldContains("nhanVien.tenNV", request.getTenNV()),
+
                 GenericSpecification.fieldEquals("chuong.maChuong", request.getMaChuong()),
                 GenericSpecification.<Pet, BigDecimal>fieldBetween("gia", request.getGiaMin(), request.getGiaMax())
         );
