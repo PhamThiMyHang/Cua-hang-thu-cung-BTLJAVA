@@ -13,6 +13,8 @@ public class LichTrucSpecification {
         return Specification.allOf(
                 GenericSpecification.fieldEquals("nhanVien.maNV", request.getMaNV()),
                 GenericSpecification.fieldEquals("caLamViec", request.getCaLamViec()),
+                // BỔ SUNG: Khớp điều kiện lọc theo một ngày cụ thể nếu có truyền lên
+                GenericSpecification.fieldEquals("ngay", request.getNgay()),
                 GenericSpecification.fieldBetween("ngay", request.getTuNgay(), request.getDenNgay())
         );
     }
