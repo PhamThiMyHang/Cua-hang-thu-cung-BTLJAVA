@@ -2,6 +2,7 @@ package com.cuahangthucung.service.user;
 
 import com.cuahangthucung.dto.user.*;
 import com.cuahangthucung.entity.user.entity.KhachHang;
+import com.cuahangthucung.entity.user.entity.User;
 import com.cuahangthucung.repository.user.KhachHangRepository;
 import com.cuahangthucung.repository.user.KhachHangSpecification;
 import com.cuahangthucung.service.base.BaseServiceImpl;
@@ -44,6 +45,14 @@ public class KhachHangServiceImpl extends BaseServiceImpl<KhachHang, Integer, Kh
                 : new KhachHang();
 
         BeanUtils.copyProperties(request, kh, "user"); // ignore quan hệ
+    // ĐÃ SỬA: Gán Proxy User để tránh việc mất thông tin tài khoản khi lưu/cập nhật dữ liệu
+            if (request.getUserID() != null) {
+                User userProxy = new User();
+                userProxy.setUserID(request.getUserID());
+                kh.setUser(userProxy);
+            } else {
+                kh.setUser(null);
+            }
         return convertToDTO(repository.save(kh));
     }
 

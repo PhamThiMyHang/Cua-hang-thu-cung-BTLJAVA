@@ -44,15 +44,8 @@ public class ChamCongController extends BaseController {
     public ResponseEntity<?> search(
             ChamCongSearchRequest request,
             @PageableDefault(sort = "ngay", direction = Sort.Direction.DESC) Pageable pageable
-    ) {
-        // 1. Lấy kết quả phân trang từ Service
-        Page<ChamCong> resultPage = chamCongService.findAll(
-                ChamCongSpecification.getFilter(request),
-                pageable
-        );
-
-        // 2. Map sang DTO và trả về (Cấu trúc chuẩn giống PetController)
-        return resSuccess(resultPage.map(chamCongService::convertToDTO), "Tìm kiếm chấm công thành công");
+    ) {Page<ChamCongDTO> resultPage = chamCongService.search(request, pageable);
+        return resSuccess(resultPage, "Tìm kiếm chấm công thành công");
     }
 
     @GetMapping

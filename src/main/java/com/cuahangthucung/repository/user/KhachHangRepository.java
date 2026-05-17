@@ -28,6 +28,7 @@ public interface KhachHangRepository extends JpaRepository<KhachHang, Integer>, 
     @Query("SELECT COUNT(k) FROM KhachHang k WHERE k.loaiKH = 'VIP'")
     Long countKhachVIP();
 
-    @Query("SELECT SUM(k.diemTichLuy) FROM KhachHang k")
+    // ĐÃ SỬA: Thêm COALESCE để đảm bảo trả về số 0 khi danh sách khách hàng trống (Tránh lỗi NullPointerException)
+    @Query("SELECT COALESCE(SUM(k.diemTichLuy), 0) FROM KhachHang k")
     Integer sumDiemTichLuy();
 }

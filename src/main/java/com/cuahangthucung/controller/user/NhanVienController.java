@@ -71,13 +71,14 @@ public class NhanVienController extends BaseController {
         NhanVienDTO saved = nhanVienService.saveRequest(request);
         return resCreated(saved, "Thêm nhân viên mới thành công");
     }
+    /*
     @PostMapping
     public ResponseEntity<Map<String, Object>> create(@RequestBody NhanVien nhanVien) {
         // KHÔNG cần set MaNV thủ công, DB sẽ tự tăng
         NhanVien saved = nhanVienService.save(nhanVien);
         return resCreated(saved, "Thêm nhân viên thành công với ID: " + saved.getMaNV());
     }
-
+*/
     /**
      * Cập nhật nhân viên
      */

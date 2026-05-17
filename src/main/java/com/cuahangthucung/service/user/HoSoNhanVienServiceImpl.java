@@ -2,6 +2,7 @@ package com.cuahangthucung.service.user;
 
 import com.cuahangthucung.dto.user.*;
 import com.cuahangthucung.entity.user.entity.HoSoNhanVien;
+import com.cuahangthucung.entity.user.entity.NhanVien;
 import com.cuahangthucung.repository.user.HoSoNhanVienRepository;
 import com.cuahangthucung.repository.user.HoSoNhanVienSpecification;
 import com.cuahangthucung.service.base.BaseServiceImpl;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,6 +46,12 @@ public class HoSoNhanVienServiceImpl extends BaseServiceImpl<HoSoNhanVien, Integ
                 : new HoSoNhanVien();
 
         BeanUtils.copyProperties(request, hs, "nhanVien"); // ignore quan hệ
+        // ĐÃ SỬA: Gán Proxy NhanVien tránh lỗi rỗng trường ràng buộc ngoại của DB
+        if (request.getMaNV() != null) {
+            NhanVien nvProxy = new NhanVien();
+            nvProxy.setMaNV(request.getMaNV());
+            hs.setNhanVien(nvProxy);
+        }
         return convertToDTO(repository.save(hs));
     }
 
@@ -56,9 +64,9 @@ public class HoSoNhanVienServiceImpl extends BaseServiceImpl<HoSoNhanVien, Integ
 
     @Override
     public HoSoNhanVienDTO findByMaNV(Integer maNV) {
-        return repository.findByMaNV(maNV) != null 
-                ? convertToDTO(repository.findByMaNV(maNV)) 
-                : null;
+        return Optional.ofNullable(repository.findByMaNV(maNV))
+                .map(this::convertToDTO)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hồ sơ của nhân viên mã: " + maNV));
     }
 
     @Override
