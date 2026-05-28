@@ -1,8 +1,10 @@
 package com.cuahangthucung.controller.user;
 
 import com.cuahangthucung.controller.base.BaseController;
-import com.cuahangthucung.dto.user.*;
-import com.cuahangthucung.service.user.LichSuDangNhapService;
+import com.cuahangthucung.dto.user.LichSuDangNhap.LichSuDangNhapDTO;
+import com.cuahangthucung.dto.user.LichSuDangNhap.LichSuDangNhapRequest;
+import com.cuahangthucung.dto.user.LichSuDangNhap.LichSuDangNhapSearchRequest;
+import com.cuahangthucung.service.user.service.LichSuDangNhapService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

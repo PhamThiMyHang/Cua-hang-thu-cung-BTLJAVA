@@ -1,8 +1,11 @@
 package com.cuahangthucung.controller.user;
 
 import com.cuahangthucung.controller.base.BaseController;
-import com.cuahangthucung.dto.user.*;
-import com.cuahangthucung.service.user.UserService;
+import com.cuahangthucung.dto.user.User.UserDTO;
+import com.cuahangthucung.dto.user.User.UserRequest;
+import com.cuahangthucung.dto.user.User.UserSearchRequest;
+import com.cuahangthucung.dto.user.User.UserSummaryDTO;
+import com.cuahangthucung.service.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -80,5 +83,24 @@ public class UserController extends BaseController {
     public ResponseEntity<Map<String, Object>> getSummary() {
         UserSummaryDTO summary = userService.getSummary();
         return resSuccess(summary, "Lấy thống kê người dùng thành công");
+    }
+
+    /*25/05/2026*/
+    @PostMapping("/{userID}/link-nhanvien/{maNV}")
+    public ResponseEntity<Map<String, Object>> linkNhanVien(
+            @PathVariable Integer userID,
+            @PathVariable Integer maNV) {
+
+        UserDTO updated = userService.linkNhanVien(userID, maNV);
+        return resSuccess(updated, "Liên kết User với Nhân viên thành công");
+    }
+
+    @PostMapping("/{userID}/link-khachhang/{maKH}")
+    public ResponseEntity<Map<String, Object>> linkKhachHang(
+            @PathVariable Integer userID,
+            @PathVariable Integer maKH) {
+
+        UserDTO updated = userService.linkKhachHang(userID, maKH);
+        return resSuccess(updated, "Liên kết User với Khách hàng thành công");
     }
 }

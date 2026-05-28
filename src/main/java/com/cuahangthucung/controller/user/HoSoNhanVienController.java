@@ -1,8 +1,10 @@
 package com.cuahangthucung.controller.user;
 
 import com.cuahangthucung.controller.base.BaseController;
-import com.cuahangthucung.dto.user.*;
-import com.cuahangthucung.service.user.HoSoNhanVienService;
+import com.cuahangthucung.dto.user.hosonhanvien.HoSoNhanVienDTO;
+import com.cuahangthucung.dto.user.hosonhanvien.HoSoNhanVienRequest;
+import com.cuahangthucung.dto.user.hosonhanvien.HoSoNhanVienSearchRequest;
+import com.cuahangthucung.service.user.service.HoSoNhanVienService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

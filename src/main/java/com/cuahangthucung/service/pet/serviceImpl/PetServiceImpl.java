@@ -1,0 +1,236 @@
+package com.cuahangthucung.service.pet.serviceImpl;
+
+
+import com.cuahangthucung.dto.pet.lichsu.LichSuSucKhoeDTO;
+import com.cuahangthucung.dto.pet.pet.PetDTO;
+import com.cuahangthucung.dto.pet.pet.PetRequest;
+import com.cuahangthucung.dto.pet.pet.PetSearchRequest;
+import com.cuahangthucung.dto.pet.pet.PetSummaryDTO;
+import com.cuahangthucung.dto.pet.petImage.PetImageDTO;
+import com.cuahangthucung.entity.pet.entity.Chuong;
+
+import com.cuahangthucung.entity.pet.entity.Pet;
+import com.cuahangthucung.entity.pet.enums.TrangThaiChuong;
+import com.cuahangthucung.entity.user.entity.KhachHang;
+import com.cuahangthucung.entity.user.entity.NhanVien;
+import com.cuahangthucung.repository.pet.Interface.ChuongRepository;
+import com.cuahangthucung.repository.pet.Interface.PetRepository;
+import com.cuahangthucung.repository.pet.Specification.PetSpecification;
+import com.cuahangthucung.repository.user.Interface.KhachHangRepository;
+import com.cuahangthucung.repository.user.Interface.NhanVienRepository;
+import com.cuahangthucung.service.base.BaseServiceImpl;
+import com.cuahangthucung.service.pet.service.PetService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
+
+
+@Service
+public class PetServiceImpl extends BaseServiceImpl<Pet, String, PetRepository> implements PetService {
+
+    private final ChuongRepository chuongRepository;
+    private final NhanVienRepository nhanVienRepository; // Thêm Repository NV
+    private final KhachHangRepository khachHangRepository; // Thêm Repository KH
+
+    public PetServiceImpl(PetRepository repository,
+                          ChuongRepository chuongRepository,
+                          NhanVienRepository nhanVienRepository,
+                          KhachHangRepository khachHangRepository) {
+        super(repository);
+        this.chuongRepository = chuongRepository;
+        this.nhanVienRepository = nhanVienRepository;
+        this.khachHangRepository = khachHangRepository;
+    }
+
+    @Override
+    public List<PetDTO> search(PetSearchRequest request) {
+        // Gọi Specification đã sửa với allOf()
+        return repository.findAll(PetSpecification.getFilter(request))
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public PetDTO saveRequest(PetRequest request) {
+        Pet pet;
+
+        // 1. Kiểm tra là thêm mới hay cập nhật
+        if (request.getMaPet() != null && !request.getMaPet().trim().isEmpty()) {
+            pet = repository.findById(request.getMaPet())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy thú cưng mã: " + request.getMaPet()));
+            // Nếu thay đổi chuồng, hãy giải phóng chuồng cũ
+            if (pet.getChuong() != null && !pet.getChuong().getMaChuong().equals(request.getMaChuong())) {
+                Chuong chuongCu = pet.getChuong();
+                chuongCu.setTrangThai(TrangThaiChuong.TRONG);
+                chuongRepository.save(chuongCu);
+            }
+        } else {
+            pet = new Pet();
+            String newId = generateNextMaPet(); // Sinh mã (VD: P260501)
+            pet.setMaPet(newId);               // Gán trực tiếp vào Entity để tránh lỗi 'ma_pet' null
+        }
+
+        // 2. Copy dữ liệu cơ bản (Tên, Giống, Tuổi, Gia, CanNang, TinhTrang, NgayTra)
+        BeanUtils.copyProperties(request, pet, "maPet", "chuong", "khachHang", "nhanVien"); // Không copy đè mã pet
+
+        // 3. Mapping Quan hệ: Chuồng (Chuong)
+        if (request.getMaChuong() != null) {
+            Chuong chuong = chuongRepository.findById(request.getMaChuong())
+                    .orElseThrow(() -> new RuntimeException("Chuồng không tồn tại: " + request.getMaChuong()));
+
+            // Logic bổ sung: Nếu chuồng đang sửa chữa thì không cho gửi pet
+            if (chuong.getTrangThai() == com.cuahangthucung.entity.pet.enums.TrangThaiChuong.SUA_CHUA) {
+                throw new RuntimeException("Chuồng này đang sửa chữa, không thể tiếp nhận thú cưng!");
+            }
+
+            pet.setChuong(chuong);
+            chuong.setTrangThai(TrangThaiChuong.KIN);
+            chuongRepository.save(chuong);
+        }
+
+        // 4. Mapping Khách hàng (MỚI)
+        if (request.getMaKH() != null) {
+            KhachHang kh = khachHangRepository.findById(request.getMaKH())
+                    .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại ID: " + request.getMaKH()));
+            pet.setKhachHang(kh);
+        }
+
+        // 5. Mapping Nhân viên (MỚI)
+        if (request.getMaNV() != null) {
+            NhanVien nv = nhanVienRepository.findById(request.getMaNV())
+                    .orElseThrow(() -> new RuntimeException("Nhân viên không tồn tại ID: " + request.getMaNV()));
+            pet.setNhanVien(nv);
+        }
+
+        // 5. Lưu vào Database
+        Pet saved = repository.save(pet);
+
+        // 6. Trả về DTO đã được làm phẳng
+        return convertToDTO(saved);
+    }
+
+    @Override
+    public PetDTO findByIdDTO(String id) {
+        return repository.findById(id)
+                .map(this::convertToDTO)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy Pet với mã: " + id));
+    }
+
+    @Override
+    public PetSummaryDTO getSummary() {
+        // Lấy số liệu thô từ các hàm @Query trong Repository
+        return new PetSummaryDTO(
+                repository.countAllPets(),
+                repository.sumAllValue(),
+                repository.countSickPets(),
+                repository.countNewPetsInMonth("P" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyMM")))
+        );
+    }
+
+    @Override
+    public String generateNextMaPet() {
+        String prefix = "P" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyMM"));
+        return repository.findLastPetByPrefix(prefix)
+                .map(lastPet -> {
+                    String lastMa = lastPet.getMaPet();
+                    // P260501 -> Lấy "01" (vị trí index 5 đến hết)
+                    int lastNumber = Integer.parseInt(lastMa.substring(5));
+                    return String.format("%s%02d", prefix, lastNumber + 1);
+                })
+                .orElse(prefix + "01");
+    }
+
+    // Hàm chuyển đổi Entity -> DTO (Flattening)
+    public PetDTO convertToDTO(Pet pet) {
+        PetDTO dto = new PetDTO();
+        BeanUtils.copyProperties(pet, dto);
+
+        // Xử lý các trường Enum hoặc trường liên kết lồng nhau
+        if (pet.getTinhTrang() != null) {
+            dto.setTinhTrang(pet.getTinhTrang().name());
+        }
+        if (pet.getChuong() != null) {
+            dto.setMaChuong(pet.getChuong().getMaChuong());
+            if (pet.getChuong().getLoaiChuong() != null) {
+                dto.setTenLoaiChuong(pet.getChuong().getLoaiChuong().getTenLoai());
+            }
+        }
+
+        // Map Khách hàng (Flattening)
+        if (pet.getKhachHang() != null) {
+            dto.setMaKH(pet.getKhachHang().getMaKH());
+            dto.setTenKH(pet.getKhachHang().getTenKH());
+        }
+
+        // Map Nhân viên (Flattening)
+        if (pet.getNhanVien() != null) {
+            dto.setMaNV(pet.getNhanVien().getMaNV());
+            dto.setTenNV(pet.getNhanVien().getTenNV());
+        }
+
+        if (pet.getDanhSachHinhAnh() != null) {
+            dto.setDanhSachHinhAnh(pet.getDanhSachHinhAnh().stream()
+                    .map(img -> {
+                        PetImageDTO imgDto = new PetImageDTO();
+                        imgDto.setMaImg(img.getMaImg());
+                        imgDto.setUrl(img.getUrl());
+                        imgDto.setThoiGianDangTai(img.getThoiGianDangTai());
+                        return imgDto;
+                    }).collect(Collectors.toList()));
+        }
+        if (pet.getLichSuSucKhoe() != null) {
+            dto.setLichSuSucKhoe(pet.getLichSuSucKhoe().stream()
+                    .map(ls -> {
+                        LichSuSucKhoeDTO lsDto = new LichSuSucKhoeDTO();
+                        BeanUtils.copyProperties(ls, lsDto);
+                        lsDto.setMaPet(pet.getMaPet());
+                        lsDto.setLoai(ls.getLoai().name());
+                        return lsDto;
+                    }).collect(Collectors.toList()));
+        }
+        return dto;
+    }
+    @Override
+    public boolean hasSeriousHealthIssue(String maPet) {
+        Pet pet = repository.findById(maPet).orElse(null);
+        if (pet == null || pet.getLichSuSucKhoe() == null) return false;
+
+        // Kiểm tra xem có bản ghi nào loại "Benh" mà mô tả có từ khóa cảnh báo không
+        return pet.getLichSuSucKhoe().stream()
+                .anyMatch(ls -> ls.getLoai().name().equals("Benh"));
+
+
+    }
+
+    /*Them chức năng*/
+    @Override
+    public List<PetDTO> findAllDTO() {
+        return repository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+    @Transactional
+    public void delete(String maPet) {
+        // 1. Tìm thông tin pet trước khi xóa
+        Pet pet = repository.findById(maPet)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy thú cưng mã: " + maPet));
+
+        // 2. Giải phóng chuồng (nếu pet đang ở trong chuồng)
+        if (pet.getChuong() != null) {
+            Chuong chuong = pet.getChuong();
+            chuong.setTrangThai(TrangThaiChuong.TRONG); //
+            chuongRepository.save(chuong);
+        }
+
+        // 3. Thực hiện xóa
+        // Lưu ý: Các bảng liên quan như PET_IMAGE hoặc LICHSU_SUC_KHOE
+        // sẽ tự động xóa nếu bạn đã cấu hình cascade = CascadeType.ALL.
+        repository.delete(pet);
+
+    }
+}

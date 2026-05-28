@@ -2,8 +2,10 @@ package com.cuahangthucung.entity.user.entity;
 
 import com.cuahangthucung.entity.user.enums.UserStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.ToString;
 
@@ -21,7 +23,6 @@ public class User {
     @Column(name = "UserID")
     private Integer userID;
 
-    @NotBlank(message = "Tên đăng nhập không được để trống")
     @Column(name = "Username", nullable = false, unique = true, length = 50)
     private String username;
 
@@ -34,6 +35,13 @@ public class User {
     @Column(name = "Status", nullable = false)
     private UserStatus status = UserStatus.ACTIVE;
 
+    // Bổ sung thuộc tính Gmail đồng bộ với DB
+    @NotBlank(message = "Gmail không được để trống")
+    @Email(message = "Email không đúng định dạng")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@gmail\\.com$", message = "Hệ thống chỉ chấp nhận tài khoản @gmail.com")
+    @Column(name = "Gmail", nullable = false, unique = true, length = 100)
+    private String gmail;
+
     // ==================== SỬA Ở ĐÂY ====================
     @NotNull(message = "Vai trò không được để trống")
     @ManyToMany(fetch = FetchType.EAGER)
@@ -44,26 +52,21 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    // Chuyển thành @OneToOne vì quan hệ tài khoản - nhân viên là 1-1 (UserID là UNIQUE)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     @ToString.Exclude
-    private List<NhanVien> danhSachNhanVien;
+    private NhanVien nhanVien;
+
+    // Chuyển thành @OneToOne tương tự cho khách hàng
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private KhachHang khachHang;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @ToString.Exclude
-    private List<KhachHang> danhSachKhachHang;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @ToString.Exclude
-
     private List<LichSuDangNhap> lichSuDangNhap;
 
-	public String getUsername() {
-		return username;
-	}
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
     
     
 }

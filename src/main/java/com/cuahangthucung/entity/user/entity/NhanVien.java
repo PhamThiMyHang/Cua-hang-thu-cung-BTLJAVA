@@ -2,8 +2,10 @@ package com.cuahangthucung.entity.user.entity;
 
 import com.cuahangthucung.entity.user.enums.ChucVu;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.ToString;
 
@@ -34,7 +36,15 @@ public class NhanVien {
     @Column(name = "ChucVu", nullable = false)
     private ChucVu chucVu;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    // Bổ sung thuộc tính Gmail đồng bộ với DB
+    @NotBlank(message = "Gmail nhân viên không được để trống")
+    @Email(message = "Email không đúng định dạng")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@gmail\\.com$", message = "Hệ thống chỉ chấp nhận tài khoản @gmail.com")
+    @Column(name = "Gmail", nullable = false, unique = true, length = 100)
+    private String gmail;
+
+    // Đổi từ @ManyToOne thành @OneToOne do cột UserID bên DB có ràng buộc UNIQUE
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserID", unique = true)
     @ToString.Exclude
     private User user;
@@ -51,12 +61,4 @@ public class NhanVien {
     @ToString.Exclude
     private List<KPIThuongPhat> danhSachKPI;
 
-	public Integer getMaNV() {
-		return maNV;
-	}
-
-	public void setMaNV(Integer maNV) {
-		this.maNV = maNV;
-	}
-    
 }

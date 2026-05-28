@@ -1,8 +1,10 @@
 package com.cuahangthucung.controller.user;
 
 import com.cuahangthucung.controller.base.BaseController;
-import com.cuahangthucung.dto.user.*;
-import com.cuahangthucung.service.user.LichTrucService;
+import com.cuahangthucung.dto.user.LichTruc.LichTrucDTO;
+import com.cuahangthucung.dto.user.LichTruc.LichTrucRequest;
+import com.cuahangthucung.dto.user.LichTruc.LichTrucSearchRequest;
+import com.cuahangthucung.service.user.service.LichTrucService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +25,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/lich-truc")
-@CrossOrigin("*")
+//@CrossOrigin("*")
 public class LichTrucController extends BaseController {
 
     private final LichTrucService lichTrucService;

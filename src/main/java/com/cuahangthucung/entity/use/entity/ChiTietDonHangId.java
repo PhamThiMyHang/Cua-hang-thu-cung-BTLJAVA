@@ -1,18 +1,16 @@
 package com.cuahangthucung.entity.use.entity;
 
-import jakarta.persistence.Embeddable;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-/*
- * Khóa chính kép (MaDH, MaSP) của bảng ChiTietDonHang.
- * Phải implement Serializable và override equals/hashCode (Lombok @Data lo phần này).
- */
-@Embeddable
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChiTietDonHangId implements Serializable {
-
-    private String maDH;
-    private String maSP;
+    private String donHang; // Phải trùng tên với tên thuộc tính đối tượng đối tác trong Entity chính
+    private String sanPham; // Phải trùng tên với tên thuộc tính đối tượng đối tác trong Entity chính
 }

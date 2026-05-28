@@ -1,0 +1,83 @@
+package com.cuahangthucung.service.user.serviceImpl;
+
+import com.cuahangthucung.dto.user.LichTruc.LichTrucDTO;
+import com.cuahangthucung.dto.user.LichTruc.LichTrucRequest;
+import com.cuahangthucung.dto.user.LichTruc.LichTrucSearchRequest;
+import com.cuahangthucung.entity.user.entity.LichTruc;
+import com.cuahangthucung.repository.user.Interface.LichTrucRepository;
+import com.cuahangthucung.repository.user.Specification.LichTrucSpecification;
+import com.cuahangthucung.service.base.BaseServiceImpl;
+import com.cuahangthucung.service.user.service.LichTrucService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class LichTrucServiceImpl extends BaseServiceImpl<LichTruc, Integer, LichTrucRepository> 
+        implements LichTrucService {
+
+    public LichTrucServiceImpl(LichTrucRepository repository) {
+        super(repository);
+    }
+
+    @Override
+    public List<LichTrucDTO> search(LichTrucSearchRequest request) {
+        return repository.findAll(LichTrucSpecification.getFilter(request))
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<LichTrucDTO> search(LichTrucSearchRequest request, Pageable pageable) {
+        return repository.findAll(LichTrucSpecification.getFilter(request), pageable)
+                .map(this::convertToDTO);
+    }
+
+    @Override
+    @Transactional
+    public LichTrucDTO saveRequest(LichTrucRequest request) {
+        // Kiểm tra trùng lịch trực
+        if (repository.existsByNhanVien_MaNVAndNgayAndCaLamViec(
+                request.getMaNV(), request.getNgay(), request.getCaLamViec())) {
+            throw new RuntimeException("Nhân viên đã có lịch trực ca này trong ngày!");
+        }
+
+        LichTruc lichTruc = (request.getId() != null)
+                ? repository.findById(request.getId()).orElse(new LichTruc())
+                : new LichTruc();
+
+        BeanUtils.copyProperties(request, lichTruc, "nhanVien"); // ignore quan hệ
+        return convertToDTO(repository.save(lichTruc));
+    }
+
+    @Override
+    public LichTrucDTO findByIdDTO(Integer id) {
+        return repository.findById(id)
+                .map(this::convertToDTO)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch trực mã: " + id));
+    }
+
+    @Override
+    public List<LichTrucDTO> findAllDTO() {
+        return repository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private LichTrucDTO convertToDTO(LichTruc entity) {
+        LichTrucDTO dto = new LichTrucDTO();
+        BeanUtils.copyProperties(entity, dto);
+
+        if (entity.getNhanVien() != null) {
+            dto.setMaNV(entity.getNhanVien().getMaNV());
+            dto.setTenNV(entity.getNhanVien().getTenNV());
+        }
+        return dto;
+    }
+}

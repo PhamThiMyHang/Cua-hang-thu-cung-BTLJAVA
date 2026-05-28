@@ -2,7 +2,7 @@ package com.cuahangthucung.controller.user;
 
 import com.cuahangthucung.controller.base.BaseController;
 import com.cuahangthucung.entity.user.entity.Role;
-import com.cuahangthucung.service.user.RoleService;
+import com.cuahangthucung.service.user.service.RoleService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

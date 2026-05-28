@@ -1,8 +1,10 @@
 package com.cuahangthucung.controller.pet;
 
 
-import com.cuahangthucung.dto.pet.*;
-import com.cuahangthucung.service.pet.PetService;
+import com.cuahangthucung.dto.pet.pet.PetRequest;
+import com.cuahangthucung.dto.pet.pet.PetSearchRequest;
+import com.cuahangthucung.repository.pet.Specification.PetSpecification;
+import com.cuahangthucung.service.pet.service.PetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -12,16 +14,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 
-import org.springframework.http.HttpStatus;
-
 import com.cuahangthucung.controller.base.BaseController;
 import com.cuahangthucung.entity.pet.entity.Pet;
-import com.cuahangthucung.service.pet.PetService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @RestController
@@ -46,7 +43,7 @@ public class PetController extends BaseController {
             @PageableDefault(sort = "maPet", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         Page<Pet> resultPage = petService.findAll(
-                com.cuahangthucung.repository.pet.PetSpecification.getFilter(request),
+                PetSpecification.getFilter(request),
                 pageable
         );
         return resSuccess(resultPage.map(petService::convertToDTO), "Tìm kiếm thú cưng thành công");

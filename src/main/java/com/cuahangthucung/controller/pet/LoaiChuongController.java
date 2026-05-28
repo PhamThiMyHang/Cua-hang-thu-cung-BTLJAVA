@@ -2,9 +2,12 @@ package com.cuahangthucung.controller.pet;
 
 import com.cuahangthucung.controller.base.BaseController;
 
-import com.cuahangthucung.dto.pet.*; // Hoặc dto.pet.* tùy cấu trúc folder của bạn
-import com.cuahangthucung.dto.pet.LoaiChuongRequest;
-import com.cuahangthucung.service.pet.LoaiChuongService;
+import com.cuahangthucung.dto.pet.loaichuong.LoaiChuongRequest;
+import com.cuahangthucung.dto.pet.loaichuong.LoaiChuongDTO;
+import com.cuahangthucung.dto.pet.loaichuong.LoaiChuongSearchRequest;
+import com.cuahangthucung.dto.pet.loaichuong.LoaiChuongSummaryDTO;
+import com.cuahangthucung.repository.pet.Specification.LoaiChuongSpecification;
+import com.cuahangthucung.service.pet.service.LoaiChuongService;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -18,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import com.cuahangthucung.entity.pet.entity.LoaiChuong;
-import org.springframework.web.bind.annotation.*;
 
 
 import java.util.Map;
@@ -47,7 +49,7 @@ public class LoaiChuongController extends BaseController {
             LoaiChuongSearchRequest request,
             @PageableDefault(sort = "tenLoai", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        var spec = com.cuahangthucung.repository.pet.LoaiChuongSpecification.getFilter(request);
+        var spec = LoaiChuongSpecification.getFilter(request);
         Page<LoaiChuong> resultPage = loaiChuongService.findAll(spec, pageable);
 
         // Map sang DTO sử dụng hàm public convertToDTO

@@ -4,9 +4,12 @@ package com.cuahangthucung.controller.pet;
 
 import com.cuahangthucung.controller.base.BaseController;
 
-import com.cuahangthucung.dto.pet.*;
-
-import com.cuahangthucung.service.pet.PetImageService;
+import com.cuahangthucung.dto.pet.petImage.PetImageDTO;
+import com.cuahangthucung.dto.pet.petImage.PetImageRequest;
+import com.cuahangthucung.dto.pet.petImage.PetImageSearchRequest;
+import com.cuahangthucung.dto.pet.petImage.PetImageSummaryDTO;
+import com.cuahangthucung.repository.pet.Specification.PetImageSpecification;
+import com.cuahangthucung.service.pet.service.PetImageService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,20 +18,10 @@ import java.util.List;
 
 import com.cuahangthucung.entity.pet.entity.PetImage;
 
-import com.cuahangthucung.service.pet.PetImageService;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import com.cuahangthucung.entity.pet.entity.PetImage;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 
 import java.util.Map;
@@ -55,7 +48,7 @@ public class PetImageController extends BaseController {
             @PageableDefault(sort = "maImg", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         // Sử dụng Specification để lọc
-        var spec = com.cuahangthucung.repository.pet.PetImageSpecification.getFilter(request);
+        var spec = PetImageSpecification.getFilter(request);
 
         // Gọi hàm findAll hỗ trợ phân trang từ BaseService
         Page<PetImage> resultPage = petImageService.findAll(spec, pageable);

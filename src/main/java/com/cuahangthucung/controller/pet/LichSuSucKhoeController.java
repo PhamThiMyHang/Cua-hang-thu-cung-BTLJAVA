@@ -1,12 +1,12 @@
 package com.cuahangthucung.controller.pet;
 
 import com.cuahangthucung.controller.base.BaseController;
-import com.cuahangthucung.dto.pet.LichSuSearchRequest;
+import com.cuahangthucung.dto.pet.lichsu.LichSuSearchRequest;
 
-import com.cuahangthucung.dto.pet.LichSuSucKhoeDTO;
-import com.cuahangthucung.dto.pet.LichSuSucKhoeRequest;
+import com.cuahangthucung.dto.pet.lichsu.LichSuSucKhoeRequest;
 import com.cuahangthucung.entity.pet.entity.LichSuSucKhoe;
-import com.cuahangthucung.service.pet.LichSuSucKhoeService;
+import com.cuahangthucung.repository.pet.Specification.LichSuSpecification;
+import com.cuahangthucung.service.pet.service.LichSuSucKhoeService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +36,7 @@ public class LichSuSucKhoeController extends BaseController {
             LichSuSearchRequest request,
             @PageableDefault(sort = "ngay", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        var spec = com.cuahangthucung.repository.pet.LichSuSpecification.getFilter(request);
+        var spec = LichSuSpecification.getFilter(request);
         Page<LichSuSucKhoe> resultPage = service.findAll(spec, pageable);
 
         // Bọc vào resSuccess để có message và status đồng nhất

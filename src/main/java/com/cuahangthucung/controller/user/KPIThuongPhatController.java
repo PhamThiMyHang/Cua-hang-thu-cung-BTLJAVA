@@ -1,8 +1,11 @@
 package com.cuahangthucung.controller.user;
 
 import com.cuahangthucung.controller.base.BaseController;
-import com.cuahangthucung.dto.user.*;
-import com.cuahangthucung.service.user.KPIThuongPhatService;
+import com.cuahangthucung.dto.user.KPIThuongPhat.KPIThuongPhatDTO;
+import com.cuahangthucung.dto.user.KPIThuongPhat.KPIThuongPhatRequest;
+import com.cuahangthucung.dto.user.KPIThuongPhat.KPIThuongPhatSearchRequest;
+import com.cuahangthucung.dto.user.KPIThuongPhat.KPIThuongPhatSummaryDTO;
+import com.cuahangthucung.service.user.service.KPIThuongPhatService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -83,7 +86,12 @@ public class KPIThuongPhatController extends BaseController {
      */
     @GetMapping("/summary")
     public ResponseEntity<Map<String, Object>> getSummary(@RequestParam(required = false) String thang) {
-        KPIThuongPhatSummaryDTO summary = kpiService.getSummary(thang);
-        return resSuccess(summary, "Lấy thống kê KPI theo tháng thành công");
+        String inputThang = thang;
+        if (inputThang == null || inputThang.trim().isEmpty()) {
+            inputThang = java.time.YearMonth.now().toString(); // định dạng YYYY-MM
+        }
+        // ĐÃ SỬA LỖI: Truyền inputThang thay vì biến ban đầu thang (có thể bị rỗng null)
+        KPIThuongPhatSummaryDTO summary = kpiService.getSummary(inputThang);
+        return resSuccess(summary, "Lấy thống kê KPI tháng " + inputThang + " thành công");
     }
 }
