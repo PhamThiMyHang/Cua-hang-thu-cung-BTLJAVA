@@ -67,6 +67,10 @@ public class SanPham {
     @JsonIgnore
     private List<PhieuNhapKho> danhSachPhieuNhập;
 
+    // Thêm vào class SanPham.java
+    @Column(name = "URL_img", length = 500)
+    private String urlImg;
+
     @OneToMany(mappedBy = "sanPham", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     @JsonIgnore

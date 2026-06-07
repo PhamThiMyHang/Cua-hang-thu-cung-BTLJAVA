@@ -20,4 +20,7 @@ public class DichVuDTO {
     // Thông tin bổ sung cho frontend
     private Long soLanSuDung;
     private Boolean dangHoatDong;
+
+    // Thêm vào class DichVuDTO
+    private String urlImg;
 }

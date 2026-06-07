@@ -42,4 +42,8 @@ public class DichVu {
     @ToString.Exclude
     @JsonIgnore
     private List<LichHen> danhSachLichHen;
+
+    // Trong file DichVu.java
+    @Column(name = "URL_img", length = 500)
+    private String urlImg;
 }

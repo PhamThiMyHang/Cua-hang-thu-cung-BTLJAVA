@@ -14,4 +14,6 @@ public class YeuThichDTO {
     private BigDecimal gia;
     private String hinhAnh;
     private LocalDateTime ngayThem;   // Nếu bạn có trường thời gian
+    private String hinhAnhUser;
+
 }

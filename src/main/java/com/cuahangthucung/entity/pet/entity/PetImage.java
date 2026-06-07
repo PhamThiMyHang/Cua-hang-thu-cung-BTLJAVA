@@ -25,7 +25,7 @@ public class PetImage {
     private Pet pet;
 
     @NotBlank(message = "URL hình ảnh không được để trống")
-    @Column(name = "Url", length = 500, nullable = false)
+    @Column(name = "URL_img", length = 500, nullable = false)
     private String url;
 
     @Column(name = "ThoiGianDangTai", nullable = false, updatable = false)

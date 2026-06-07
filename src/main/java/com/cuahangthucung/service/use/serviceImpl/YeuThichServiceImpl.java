@@ -4,6 +4,7 @@ package com.cuahangthucung.service.use.serviceImpl;
 import com.cuahangthucung.dto.use.yeuthich.YeuThichDTO;
 import com.cuahangthucung.dto.use.yeuthich.YeuThichRequest;
 import com.cuahangthucung.dto.use.yeuthich.YeuThichSearchRequest;
+import com.cuahangthucung.dto.user.User.UserDTO;
 import com.cuahangthucung.entity.use.entity.SanPham;
 import com.cuahangthucung.entity.use.entity.YeuThich;
 import com.cuahangthucung.entity.use.entity.YeuThichId;
@@ -79,10 +80,27 @@ public class YeuThichServiceImpl extends BaseServiceImpl<YeuThich, YeuThichId, Y
         YeuThich saved = repository.save(yeuThich);
         return convertToDTO(saved);
     }
+
+    // Trong YeuThichServiceImpl.java
+    @Transactional
+    public YeuThichDTO toggleLike(YeuThichRequest request) {
+        Integer maUserInt = Integer.parseInt(request.getMaUser().trim());
+        YeuThichId id = new YeuThichId(maUserInt, request.getMaSP());
+
+        if (repository.existsById(id)) {
+            repository.deleteById(id); // Nếu đã thích -> Bỏ thích
+            return null; // Trả về null để frontend biết là đã bỏ thích
+        } else {
+            // Lưu mới như logic bạn đã có
+            return saveRequest(request);
+        }
+    }
+
+
     @Override
     public List<YeuThichDTO> findByMaUser(String maUser) {
         Integer userIdInt = Integer.parseInt(maUser.trim()); // Quan trọng
-        return repository.findByIdMaUser(userIdInt)
+        return repository.findByMaUserWithSanPham(userIdInt)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -122,6 +140,27 @@ public class YeuThichServiceImpl extends BaseServiceImpl<YeuThich, YeuThichId, Y
 
         }
 
+        dto.setHinhAnh(entity.getSanPham().getUrlImg());
         return dto;
+    }
+
+    @Override
+    public long countByMaSP(String maSP) {
+        return repository.countByIdMaSP(maSP);
+    }
+
+    // Trong YeuThichServiceImpl.java
+    @Override
+    public List<UserDTO> findUsersBySanPham(String maSP) {
+        return repository.findByMaSP(maSP)
+                .stream()
+                .map(y -> {
+                    UserDTO dto = new UserDTO();
+                    dto.setUserID(y.getUser().getUserID());
+                    dto.setUsername(y.getUser().getUsername());
+                    // Không trả về password, email hay thông tin nhạy cảm khác
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 }

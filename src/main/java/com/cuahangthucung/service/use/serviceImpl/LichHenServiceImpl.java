@@ -1,5 +1,6 @@
 package com.cuahangthucung.service.use.serviceImpl;
 
+import com.cuahangthucung.dto.use.lichhen.DoanhThuNhanVienDTO;
 import com.cuahangthucung.dto.use.lichhen.LichHenDTO;
 import com.cuahangthucung.dto.use.lichhen.LichHenRequest;
 import com.cuahangthucung.dto.use.lichhen.LichHenSearchRequest;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -142,6 +144,7 @@ public class LichHenServiceImpl extends BaseServiceImpl<LichHen, String, LichHen
         if (entity.getDichVu() != null) {
             dto.setMaDV(entity.getDichVu().getMaDV());
             dto.setTenDV(entity.getDichVu().getTenDV());
+            dto.setGiaDV(entity.getDichVu().getGia());
         }
 
         return dto;
@@ -164,5 +167,15 @@ public class LichHenServiceImpl extends BaseServiceImpl<LichHen, String, LichHen
         } catch (Exception e) {
             return PREFIX_LICH_HEN + "_" + System.currentTimeMillis();
         }
+    }
+
+    @Override
+    public BigDecimal tongDoanhThu() {
+        return repository.tongDoanhThu();
+    }
+
+    @Override
+    public List<DoanhThuNhanVienDTO> thongKeDoanhThuNhanVien() {
+        return repository.thongKeDoanhThuNhanVien();
     }
 }

@@ -37,4 +37,6 @@ public class SanPhamDTO {
     private String viTri;
     private String maNCC;
     private String tenNCC;
+    private String urlImg;
+    private boolean isLiked;
 }

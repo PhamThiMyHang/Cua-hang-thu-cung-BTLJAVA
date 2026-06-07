@@ -3,6 +3,7 @@ package com.cuahangthucung.controller.use;
 import com.cuahangthucung.dto.use.yeuthich.YeuThichDTO;
 import com.cuahangthucung.dto.use.yeuthich.YeuThichRequest;
 import com.cuahangthucung.dto.use.yeuthich.YeuThichSearchRequest;
+import com.cuahangthucung.dto.user.User.UserDTO;
 import com.cuahangthucung.service.use.service.YeuThichService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -69,4 +70,17 @@ public class YeuThichController {
         boolean exists = yeuThichService.existsByUserAndSanPham(maUser, maSP);
         return ResponseEntity.ok(exists);
     }
+
+    @GetMapping("/count/{maSP}")
+    public ResponseEntity<Long> countBySanPham(@PathVariable String maSP) {
+        return ResponseEntity.ok(yeuThichService.countByMaSP(maSP));
+    }
+
+
+    @GetMapping("/product/{maSP}/users")
+    public ResponseEntity<List<UserDTO>> getLikedUsers(@PathVariable String maSP) {
+        List<UserDTO> users = yeuThichService.findUsersBySanPham(maSP);
+        return ResponseEntity.ok(users);
+    }
+
 }

@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import com.cuahangthucung.dto.use.lichhen.DoanhThuNhanVienDTO;
+import java.math.BigDecimal;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,14 +53,6 @@ public interface LichHenRepository extends JpaRepository<LichHen, String>, JpaSp
     Optional<LichHen> findLastLichHenByPrefix(@Param("prefix") String prefix);
 
     // ĐÃ BỔ SUNG: Truy vấn phân trang tối ưu, nạp nhanh thông tin tên Khách, tên Pet, tên NV, tên Dịch vụ
-    @Override
-    @Query(value = "SELECT DISTINCT lh FROM LichHen lh " +
-            "LEFT JOIN FETCH lh.khachHang " +
-            "LEFT JOIN FETCH lh.pet " +
-            "LEFT JOIN FETCH lh.nhanVien " +
-            "LEFT JOIN FETCH lh.dichVu",
-            countQuery = "SELECT COUNT(lh) FROM LichHen lh")
-    Page<LichHen> findAll(Specification<LichHen> spec, Pageable pageable);
 
     // ĐÃ BỔ SUNG: Viết câu truy vấn gộp tính toán thống kê tổng quan (Dashboard)
     @Query("SELECT new com.cuahangthucung.dto.use.lichhen.LichHenSummaryDTO(" +
@@ -70,4 +64,46 @@ public interface LichHenRepository extends JpaRepository<LichHen, String>, JpaSp
             "SUM(CASE WHEN lh.trangThai = 'CANCEL' THEN 1 ELSE 0 END)) " +
             "FROM LichHen lh")
     LichHenSummaryDTO layThongKeTongQuanLichHen();
+
+    @Query("""
+        SELECT COALESCE(SUM(dv.gia), 0)
+        FROM LichHen lh
+        JOIN lh.dichVu dv
+        WHERE lh.trangThai = com.cuahangthucung.entity.use.enums.TrangThai.DONE
+        """)
+    BigDecimal tongDoanhThu();
+
+    @Query("""
+    SELECT new com.cuahangthucung.dto.use.lichhen.DoanhThuNhanVienDTO(
+        nv.maNV,
+        nv.tenNV,
+        COUNT(lh),
+        COALESCE(SUM(dv.gia), 0)
+    )
+    FROM LichHen lh
+    JOIN lh.nhanVien nv
+    JOIN lh.dichVu dv
+    WHERE lh.trangThai = com.cuahangthucung.entity.use.enums.TrangThai.DONE
+    GROUP BY nv.maNV, nv.tenNV
+    ORDER BY COALESCE(SUM(dv.gia), 0) DESC
+    """)
+    List<DoanhThuNhanVienDTO> thongKeDoanhThuNhanVien();
+
+    @Query("""
+    SELECT new com.cuahangthucung.dto.use.lichhen.DoanhThuNhanVienDTO(
+        nv.maNV,
+        nv.tenNV,
+        COUNT(lh),
+        COALESCE(SUM(dv.gia),0)
+    )
+    FROM LichHen lh
+    JOIN lh.nhanVien nv
+    JOIN lh.dichVu dv
+    WHERE lh.trangThai = com.cuahangthucung.entity.use.enums.TrangThai.DONE
+    AND nv.maNV = :maNV
+    GROUP BY nv.maNV, nv.tenNV
+    """)
+    DoanhThuNhanVienDTO thongKeDoanhThuNhanVien(
+            @Param("maNV") Integer maNV);
+
 }

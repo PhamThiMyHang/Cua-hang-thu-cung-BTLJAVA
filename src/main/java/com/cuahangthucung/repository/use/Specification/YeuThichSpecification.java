@@ -22,11 +22,6 @@ public class YeuThichSpecification {
                 predicates.add(cb.equal(root.get("id").get("maSP"), request.getMaSP().trim()));
             }
 
-            // Lọc theo mã sản phẩm
-            if (request.getMaUser() != null && !request.getMaUser().isBlank()) {
-                // Ép kiểu String từ Request sang Integer
-                predicates.add(cb.equal(root.get("id").get("maUser"), Integer.parseInt(request.getMaUser().trim())));
-            }
 
             // Tìm kiếm theo keyword (tên sản phẩm)
             if (request.getKeyword() != null && !request.getKeyword().isBlank()) {

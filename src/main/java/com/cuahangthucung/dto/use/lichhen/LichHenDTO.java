@@ -3,6 +3,7 @@ package com.cuahangthucung.dto.use.lichhen;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
 
 import java.time.LocalDateTime;
 
@@ -20,6 +21,7 @@ public class LichHenDTO {
     private String tenNV;
     private String maDV;
     private String tenDV;
+    private BigDecimal giaDV;
     private LocalDateTime thoiGian;
     private String trangThai;
 }

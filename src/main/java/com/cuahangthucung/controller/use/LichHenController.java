@@ -65,4 +65,30 @@ public class LichHenController extends BaseController {
         lichHenService.deleteById(id);
         return resSuccess(null, "Xóa lịch hẹn thành công");
     }
+
+    @GetMapping("/tong-doanh-thu")
+    public ResponseEntity<Map<String, Object>> tongDoanhThu() {
+        return resSuccess(
+                lichHenService.tongDoanhThu(),
+                "Lấy tổng doanh thu thành công"
+        );
+    }
+
+    @GetMapping("/doanh-thu-nhan-vien")
+    public ResponseEntity<Map<String, Object>> doanhThuNhanVien() {
+        return resSuccess(
+                lichHenService.thongKeDoanhThuNhanVien(),
+                "Lấy doanh thu nhân viên thành công"
+        );
+    }
+
+    @GetMapping("/doanh-thu-nhan-vien/{maNV}")
+    public ResponseEntity<Map<String, Object>> doanhThuNhanVien(
+            @PathVariable Integer maNV) {
+
+        return resSuccess(
+                lichHenService.thongKeDoanhThuNhanVien(maNV),
+                "Lấy doanh thu nhân viên thành công"
+        );
+    }
 }

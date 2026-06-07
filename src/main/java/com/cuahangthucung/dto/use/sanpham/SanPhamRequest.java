@@ -41,4 +41,5 @@ public class SanPhamRequest {
 
     @NotBlank(message = "Mã nhà cung cấp không được để trống")
     private String maNCC;
+    private String urlImg;
 }

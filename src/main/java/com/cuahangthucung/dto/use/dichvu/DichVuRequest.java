@@ -18,4 +18,8 @@ public class DichVuRequest {
     private BigDecimal gia;
 
     private String moTa;
+
+    // Thêm vào class DichVuRequest
+    private String urlImg;
+
 }

@@ -9,6 +9,7 @@ import com.cuahangthucung.entity.use.entity.SanPham;
 import com.cuahangthucung.exception.ResourceNotFoundException;
 import com.cuahangthucung.repository.use.Interface.NhaCungCapRepository;
 import com.cuahangthucung.repository.use.Interface.SanPhamRepository;
+import com.cuahangthucung.repository.use.Interface.YeuThichRepository;
 import com.cuahangthucung.repository.use.Specification.SanPhamSpecification;
 import com.cuahangthucung.service.base.BaseServiceImpl;
 import com.cuahangthucung.service.use.service.SanPhamService;
@@ -32,10 +33,15 @@ public class SanPhamServiceImpl extends BaseServiceImpl<SanPham, String, SanPham
         implements SanPhamService {
 
     private final NhaCungCapRepository nhaCungCapRepository;
+    private final YeuThichRepository yeuThichRepository;
 
-    public SanPhamServiceImpl(SanPhamRepository repository, NhaCungCapRepository nhaCungCapRepository) {
+
+    public SanPhamServiceImpl(SanPhamRepository repository,
+                              NhaCungCapRepository nhaCungCapRepository,
+                              YeuThichRepository yeuThichRepository) {
         super(repository);
         this.nhaCungCapRepository = nhaCungCapRepository;
+        this.yeuThichRepository = yeuThichRepository;
     }
 
     @Override
@@ -156,6 +162,22 @@ public class SanPhamServiceImpl extends BaseServiceImpl<SanPham, String, SanPham
         return emptyNames.toArray(new String[0]);
     }
 
+    // --- Cập nhật phương thức convert hoặc dùng hàm bổ trợ ---
+    // Cách tối ưu: Tạo phương thức helper để set trạng thái yêu thích cho List DTO
+    public void populateIsLikedStatus(List<SanPhamDTO> dtos, Integer maUser) {
+        if (maUser == null) {
+            dtos.forEach(dto -> dto.setLiked(false));
+            return;
+        }
+
+        // Lấy danh sách maSP đã thích của User (Cần thêm hàm này vào YeuThichRepository)
+        // Ví dụ: List<String> listMaSP = yeuThichRepository.findListMaSPByMaUser(maUser);
+        Set<String> setLiked = new HashSet<>(yeuThichRepository.findListMaSPByMaUser(maUser));
+
+        dtos.forEach(dto -> dto.setLiked(setLiked.contains(dto.getMaSP())));
+    }
+
+
     private SanPhamDTO convertToDTO(SanPham entity) {
         if (entity == null) return null;
 
@@ -166,7 +188,6 @@ public class SanPhamServiceImpl extends BaseServiceImpl<SanPham, String, SanPham
             dto.setMaNCC(entity.getNhaCungCap().getMaNCC());
             dto.setTenNCC(entity.getNhaCungCap().getTenNCC());
         }
-
         return dto;
     }
 }
