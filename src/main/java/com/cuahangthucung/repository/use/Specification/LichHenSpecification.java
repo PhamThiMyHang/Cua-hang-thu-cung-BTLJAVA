@@ -35,8 +35,12 @@ public class LichHenSpecification {
             // 3. Lọc theo Mã Pet (An toàn ép kiểu Integer)
             if (request.getMaPet() != null && !request.getMaPet().isBlank()) {
                 try {
-                    Integer petId = Integer.parseInt(request.getMaPet().trim());
-                    predicates.add(cb.equal(root.get("pet").get("maPet"), petId));
+                    predicates.add(
+                            cb.equal(
+                                    root.get("pet").get("maPet"),
+                                    request.getMaPet().trim()
+                            )
+                    );
                 } catch (NumberFormatException ignored) {}
             }
 

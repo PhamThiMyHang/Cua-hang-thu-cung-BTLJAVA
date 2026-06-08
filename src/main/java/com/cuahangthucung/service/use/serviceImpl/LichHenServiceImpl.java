@@ -92,7 +92,7 @@ public class LichHenServiceImpl extends BaseServiceImpl<LichHen, String, LichHen
         }
 
         if (request.getMaPet() != null && !request.getMaPet().isBlank()) {
-            lh.setPet(entityManager.getReference(Pet.class, Integer.parseInt(request.getMaPet().trim())));
+            lh.setPet(entityManager.getReference(Pet.class, request.getMaPet().trim()));
         } else {
             lh.setPet(null);
         }
@@ -177,5 +177,21 @@ public class LichHenServiceImpl extends BaseServiceImpl<LichHen, String, LichHen
     @Override
     public List<DoanhThuNhanVienDTO> thongKeDoanhThuNhanVien() {
         return repository.thongKeDoanhThuNhanVien();
+    }
+
+    @Override
+    public DoanhThuNhanVienDTO thongKeDoanhThuNhanVien(Integer maNV) {
+
+        DoanhThuNhanVienDTO dto =
+                repository.thongKeDoanhThuNhanVien(maNV);
+
+        if(dto == null){
+            dto = new DoanhThuNhanVienDTO();
+            dto.setMaNV(maNV);
+            dto.setSoLichHoanThanh(0L);
+            dto.setDoanhThu(BigDecimal.ZERO);
+        }
+
+        return dto;
     }
 }
