@@ -37,8 +37,8 @@ public class SanPhamRequest {
 
     private Integer soLuong;
     private LocalDate hanSuDung;
-    private String viTri;
 
+    private String viTri;
     @NotBlank(message = "Mã nhà cung cấp không được để trống")
     private String maNCC;
     private String urlImg;

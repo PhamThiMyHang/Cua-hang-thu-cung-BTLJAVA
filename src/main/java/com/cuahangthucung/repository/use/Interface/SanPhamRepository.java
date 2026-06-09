@@ -30,7 +30,7 @@ public interface SanPhamRepository extends JpaRepository<SanPham, String>, JpaSp
     List<SanPham> findByNhaCungCap_MaNCC(String maNCC);
 
     // Tìm theo vị trí kho gần đúng
-    List<SanPham> findByViTriContainingIgnoreCase(String viTri);
+    List<SanPham> findByViTriSanPham_MaViTri(String maViTri);
 
     // Tìm sản phẩm còn hàng (soLuong > 0)
     List<SanPham> findBySoLuongGreaterThan(int soLuong);
@@ -74,4 +74,6 @@ public interface SanPhamRepository extends JpaRepository<SanPham, String>, JpaSp
     // Sử dụng COALESCE để phòng trường hợp kho trống không có sản phẩm nào thì trả về 0 thay vì null
     @Query("SELECT COALESCE(SUM(sp.gia * sp.soLuong), 0) FROM SanPham sp")
     BigDecimal tinhTongGiaTriKho();
+
+    long countByViTriSanPham_MaViTri(String maViTri);
 }

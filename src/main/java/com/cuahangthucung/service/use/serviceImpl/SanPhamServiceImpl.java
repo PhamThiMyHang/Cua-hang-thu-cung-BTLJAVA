@@ -6,9 +6,11 @@ import com.cuahangthucung.dto.use.sanpham.SanPhamSearchRequest;
 import com.cuahangthucung.dto.use.sanpham.SanPhamSummaryDTO;
 import com.cuahangthucung.entity.use.entity.NhaCungCap;
 import com.cuahangthucung.entity.use.entity.SanPham;
+import com.cuahangthucung.entity.use.entity.ViTriSanPham;
 import com.cuahangthucung.exception.ResourceNotFoundException;
 import com.cuahangthucung.repository.use.Interface.NhaCungCapRepository;
 import com.cuahangthucung.repository.use.Interface.SanPhamRepository;
+import com.cuahangthucung.repository.use.Interface.ViTriSanPhamRepository;
 import com.cuahangthucung.repository.use.Interface.YeuThichRepository;
 import com.cuahangthucung.repository.use.Specification.SanPhamSpecification;
 import com.cuahangthucung.service.base.BaseServiceImpl;
@@ -34,14 +36,16 @@ public class SanPhamServiceImpl extends BaseServiceImpl<SanPham, String, SanPham
 
     private final NhaCungCapRepository nhaCungCapRepository;
     private final YeuThichRepository yeuThichRepository;
-
+    private final ViTriSanPhamRepository viTriRepository;
 
     public SanPhamServiceImpl(SanPhamRepository repository,
                               NhaCungCapRepository nhaCungCapRepository,
-                              YeuThichRepository yeuThichRepository) {
+                              YeuThichRepository yeuThichRepository,
+                              ViTriSanPhamRepository viTriRepository) {
         super(repository);
         this.nhaCungCapRepository = nhaCungCapRepository;
         this.yeuThichRepository = yeuThichRepository;
+        this.viTriRepository = viTriRepository;
     }
 
     @Override
@@ -103,6 +107,20 @@ public class SanPhamServiceImpl extends BaseServiceImpl<SanPham, String, SanPham
             throw new IllegalArgumentException("Mã nhà cung cấp không được để trống khi lưu sản phẩm");
         }
         // Lưu ý: Nếu là Update và request.getMaNCC() bị trống, khối logic trên sẽ bỏ qua và giữ nguyên Nhà cung cấp cũ
+
+        // Xử lý vị trí
+        if (request.getViTri() != null &&
+                !request.getViTri().trim().isEmpty()) {
+
+            ViTriSanPham vt = viTriRepository
+                    .findById(request.getViTri().trim())
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Không tìm thấy vị trí: "
+                                            + request.getViTri()));
+
+            sp.setViTriSanPham(vt);
+        }
 
         return convertToDTO(repository.save(sp));
     }
@@ -184,10 +202,23 @@ public class SanPhamServiceImpl extends BaseServiceImpl<SanPham, String, SanPham
         SanPhamDTO dto = new SanPhamDTO();
         BeanUtils.copyProperties(entity, dto);
 
+
         if (entity.getNhaCungCap() != null) {
             dto.setMaNCC(entity.getNhaCungCap().getMaNCC());
             dto.setTenNCC(entity.getNhaCungCap().getTenNCC());
         }
+
+        if(entity.getViTriSanPham()!=null){
+            dto.setViTri(
+                    entity.getViTriSanPham().getMaViTri()
+            );
+            dto.setTenViTri(entity.getViTriSanPham().getViTri());
+        }
         return dto;
+    }
+
+    @Override
+    public long countByViTri(String maViTri) {
+        return repository.countByViTriSanPham_MaViTri(maViTri);
     }
 }

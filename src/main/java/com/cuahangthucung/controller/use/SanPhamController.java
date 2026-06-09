@@ -75,4 +75,14 @@ public class SanPhamController extends BaseController {
     public ResponseEntity<Map<String, Object>> getSummary() {
         return resSuccess(sanPhamService.getSummary(5), "Lấy thống kê sản phẩm thành công");
     }
+
+    @GetMapping("/vi-tri/{maViTri}/count")
+    public ResponseEntity<Map<String, Object>> countByViTri(
+            @PathVariable String maViTri) {
+
+        return resSuccess(
+                sanPhamService.countByViTri(maViTri),
+                "Lấy số lượng sản phẩm theo kệ thành công"
+        );
+    }
 }

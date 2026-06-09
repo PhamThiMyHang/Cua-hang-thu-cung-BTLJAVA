@@ -21,4 +21,6 @@ public interface SanPhamService extends BaseService<SanPham, String> {
     /* --- BỔ SUNG --- */
     // Thống kê kho với ngưỡng cảnh báo tùy chọn (ví dụ: dưới 5)
     SanPhamSummaryDTO getSummary(Integer nguongCanhBao);
+
+    long countByViTri(String maViTri);
 }

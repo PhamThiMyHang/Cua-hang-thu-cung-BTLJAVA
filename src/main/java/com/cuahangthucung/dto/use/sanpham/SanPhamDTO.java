@@ -34,7 +34,9 @@ public class SanPhamDTO {
     private BigDecimal gia;
     private Integer soLuong;
     private LocalDate hanSuDung;
-    private String viTri;
+    private String viTri;     // mã vị trí
+
+    private String tenViTri;  // tên hiển thị
     private String maNCC;
     private String tenNCC;
     private String urlImg;

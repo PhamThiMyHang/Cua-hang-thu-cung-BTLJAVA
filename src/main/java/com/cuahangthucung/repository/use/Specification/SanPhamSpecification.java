@@ -35,9 +35,29 @@ public class SanPhamSpecification {
             }
 
             // 4. Lọc theo vị trí kho (gần đúng)
-            if (request.getViTri() != null && !request.getViTri().isBlank()) {
-                predicates.add(cb.like(cb.lower(root.get("viTri")),
-                        "%" + request.getViTri().toLowerCase() + "%"));
+            if (request.getViTri() != null &&
+                    !request.getViTri().isBlank()) {
+
+                String key = "%" + request.getViTri().toLowerCase() + "%";
+
+                predicates.add(
+                        cb.or(
+                                cb.like(
+                                        cb.lower(
+                                                root.get("viTriSanPham")
+                                                        .get("maViTri")
+                                        ),
+                                        key
+                                ),
+                                cb.like(
+                                        cb.lower(
+                                                root.get("viTriSanPham")
+                                                        .get("viTri")
+                                        ),
+                                        key
+                                )
+                        )
+                );
             }
 
             // 5. Lọc theo khoảng Giá (minGia -> maxGia)

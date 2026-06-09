@@ -43,9 +43,13 @@ public class SanPham {
     @Column(name = "HanSuDung")
     private LocalDate hanSuDung;
 
-    @Column(name = "ViTri", length = 100)
-    @Size(max = 100, message = "Vị trí trong kho không được vượt quá 100 ký tự")
-    private String viTri;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "ViTri",
+            referencedColumnName = "MaViTri"
+    )
+    @ToString.Exclude
+    private ViTriSanPham viTriSanPham;
 
     // QUAN HỆ: Nhiều sản phẩm thuộc về một Nhà cung cấp
     @ManyToOne(fetch = FetchType.LAZY)
