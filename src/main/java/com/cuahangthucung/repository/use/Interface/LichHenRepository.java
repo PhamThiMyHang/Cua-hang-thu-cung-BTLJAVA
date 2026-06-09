@@ -1,0 +1,109 @@
+package com.cuahangthucung.repository.use.Interface;
+
+import com.cuahangthucung.entity.use.entity.LichHen;
+import com.cuahangthucung.entity.use.enums.TrangThai;
+import com.cuahangthucung.dto.use.lichhen.LichHenSummaryDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import com.cuahangthucung.dto.use.lichhen.DoanhThuNhanVienDTO;
+import java.math.BigDecimal;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface LichHenRepository extends JpaRepository<LichHen, String>, JpaSpecificationExecutor<LichHen> {
+
+    List<LichHen> findByKhachHang_MaKH(Integer maKH);
+    List<LichHen> findByPet_MaPet(String maPet);
+    List<LichHen> findByNhanVien_MaNV(Integer maNV);
+    List<LichHen> findByDichVu_MaDV(String maDV);
+    List<LichHen> findByTrangThai(TrangThai trangThai);
+    List<LichHen> findByKhachHang_MaKHAndTrangThai(Integer maKH, TrangThai trangThai);
+    List<LichHen> findByNhanVien_MaNVAndTrangThai(Integer maNV, TrangThai trangThai);
+    List<LichHen> findByThoiGianBetween(LocalDateTime tuThoiGian, LocalDateTime denThoiGian);
+    long countByTrangThai(TrangThai trangThai);
+    long countByNhanVien_MaNV(Integer maNV);
+    long countByKhachHang_MaKH(Integer maKH);
+
+    @Query("SELECT lh FROM LichHen lh WHERE lh.maLich LIKE :prefix% ORDER BY lh.maLich DESC LIMIT 1")
+    Optional<LichHen> findLastLichHenByPrefix(@Param("prefix") String prefix);
+
+    @Query("SELECT new com.cuahangthucung.dto.use.lichhen.LichHenSummaryDTO(" +
+            "COUNT(lh), " +
+            "SUM(CASE WHEN lh.trangThai = 'PENDING' THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN lh.trangThai = 'CONFIRMED' THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN lh.trangThai = 'IN_PROGRESS' THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN lh.trangThai = 'DONE' THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN lh.trangThai = 'CANCEL' THEN 1 ELSE 0 END)) " +
+            "FROM LichHen lh")
+    LichHenSummaryDTO layThongKeTongQuanLichHen();
+
+    @Query("""
+        SELECT COALESCE(SUM(dv.gia), 0)
+        FROM LichHen lh
+        JOIN lh.dichVu dv
+        WHERE lh.trangThai = com.cuahangthucung.entity.use.enums.TrangThai.DONE
+        """)
+    BigDecimal tongDoanhThu();
+
+    @Query("""
+    SELECT new com.cuahangthucung.dto.use.lichhen.DoanhThuNhanVienDTO(
+        nv.maNV,
+        nv.tenNV,
+        COUNT(lh),
+        COALESCE(SUM(dv.gia), 0)
+    )
+    FROM LichHen lh
+    JOIN lh.nhanVien nv
+    JOIN lh.dichVu dv
+    WHERE lh.trangThai = com.cuahangthucung.entity.use.enums.TrangThai.DONE
+    GROUP BY nv.maNV, nv.tenNV
+    ORDER BY COALESCE(SUM(dv.gia), 0) DESC
+    """)
+    List<DoanhThuNhanVienDTO> thongKeDoanhThuNhanVien();
+
+    // ✅ FIX: @Query đặt đúng TRÊN method, không bị lẫn với query khác
+    @Query("""
+    SELECT new com.cuahangthucung.dto.use.lichhen.DoanhThuNhanVienDTO(
+        nv.maNV,
+        nv.tenNV,
+        COUNT(lh),
+        COALESCE(SUM(dv.gia),0)
+    )
+    FROM LichHen lh
+    JOIN lh.nhanVien nv
+    JOIN lh.dichVu dv
+    WHERE lh.trangThai = com.cuahangthucung.entity.use.enums.TrangThai.DONE
+    AND nv.maNV = :maNV
+    GROUP BY nv.maNV, nv.tenNV
+    """)
+    DoanhThuNhanVienDTO thongKeDoanhThuNhanVien(@Param("maNV") Integer maNV);
+
+    /**
+     * Kiểm tra nhân viên có lịch trùng giờ không (±60 phút).
+     * excludeMaLich: bỏ qua chính lịch đang cập nhật (null khi tạo mới).
+     */
+    @Query("""
+        SELECT COUNT(lh) > 0
+        FROM LichHen lh
+        WHERE lh.nhanVien.maNV = :maNV
+          AND lh.trangThai NOT IN (
+              com.cuahangthucung.entity.use.enums.TrangThai.CANCEL,
+              com.cuahangthucung.entity.use.enums.TrangThai.DONE
+          )
+          AND ABS(TIMESTAMPDIFF(MINUTE, lh.thoiGian, :thoiGian)) < 60
+          AND (:excludeMaLich IS NULL OR lh.maLich <> :excludeMaLich)
+        """)
+    boolean existsConflictNhanVien(
+            @Param("maNV") Integer maNV,
+            @Param("thoiGian") java.time.LocalDateTime thoiGian,
+            @Param("excludeMaLich") String excludeMaLich);
+}
