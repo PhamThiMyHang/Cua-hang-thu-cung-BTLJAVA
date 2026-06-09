@@ -55,6 +55,7 @@ public interface LichHenRepository extends JpaRepository<LichHen, String>, JpaSp
     // ĐÃ BỔ SUNG: Truy vấn phân trang tối ưu, nạp nhanh thông tin tên Khách, tên Pet, tên NV, tên Dịch vụ
 
     // ĐÃ BỔ SUNG: Viết câu truy vấn gộp tính toán thống kê tổng quan (Dashboard)
+
     @Query("SELECT new com.cuahangthucung.dto.use.lichhen.LichHenSummaryDTO(" +
             "COUNT(lh), " +
             "SUM(CASE WHEN lh.trangThai = 'PENDING' THEN 1 ELSE 0 END), " +
@@ -89,6 +90,7 @@ public interface LichHenRepository extends JpaRepository<LichHen, String>, JpaSp
     """)
     List<DoanhThuNhanVienDTO> thongKeDoanhThuNhanVien();
 
+
     @Query("""
     SELECT new com.cuahangthucung.dto.use.lichhen.DoanhThuNhanVienDTO(
         nv.maNV,
@@ -103,7 +105,27 @@ public interface LichHenRepository extends JpaRepository<LichHen, String>, JpaSp
     AND nv.maNV = :maNV
     GROUP BY nv.maNV, nv.tenNV
     """)
-    DoanhThuNhanVienDTO thongKeDoanhThuNhanVien(
-            @Param("maNV") Integer maNV);
+
+    DoanhThuNhanVienDTO thongKeDoanhThuNhanVien(@Param("maNV") Integer maNV);
+
+    /**
+     * Kiểm tra nhân viên có lịch trùng giờ không (±60 phút).
+     * excludeMaLich: bỏ qua chính lịch đang cập nhật (null khi tạo mới).
+     */
+    @Query("""
+        SELECT COUNT(lh) > 0
+        FROM LichHen lh
+        WHERE lh.nhanVien.maNV = :maNV
+          AND lh.trangThai NOT IN (
+              com.cuahangthucung.entity.use.enums.TrangThai.CANCEL,
+              com.cuahangthucung.entity.use.enums.TrangThai.DONE
+          )
+          AND ABS(TIMESTAMPDIFF(MINUTE, lh.thoiGian, :thoiGian)) < 60
+          AND (:excludeMaLich IS NULL OR lh.maLich <> :excludeMaLich)
+        """)
+    boolean existsConflictNhanVien(
+            @Param("maNV") Integer maNV,
+            @Param("thoiGian") java.time.LocalDateTime thoiGian,
+            @Param("excludeMaLich") String excludeMaLich);
 
 }

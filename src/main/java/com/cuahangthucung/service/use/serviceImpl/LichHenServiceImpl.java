@@ -1,6 +1,12 @@
 package com.cuahangthucung.service.use.serviceImpl;
 
 import com.cuahangthucung.dto.use.lichhen.*;
+
+import com.cuahangthucung.dto.use.lichhen.DoanhThuNhanVienDTO;
+import com.cuahangthucung.dto.use.lichhen.LichHenDTO;
+import com.cuahangthucung.dto.use.lichhen.LichHenRequest;
+import com.cuahangthucung.dto.use.lichhen.LichHenSearchRequest;
+
 import com.cuahangthucung.entity.pet.entity.Pet;
 import com.cuahangthucung.entity.use.entity.DichVu;
 import com.cuahangthucung.entity.use.entity.LichHen;
@@ -90,6 +96,7 @@ public class LichHenServiceImpl extends BaseServiceImpl<LichHen, String, LichHen
 
         if (request.getMaPet() != null && !request.getMaPet().isBlank()) {
             lh.setPet(entityManager.getReference(Pet.class, request.getMaPet().trim()));
+
         } else {
             lh.setPet(null);
         }
@@ -101,6 +108,30 @@ public class LichHenServiceImpl extends BaseServiceImpl<LichHen, String, LichHen
         if (request.getMaDV() != null && !request.getMaDV().isBlank()) {
             lh.setDichVu(entityManager.getReference(DichVu.class, request.getMaDV().trim()));
         }
+
+
+        // 5. Kiểm tra trùng giờ nhân viên (bỏ qua nếu không có maNV)
+        if (request.getMaNV() != null && !request.getMaNV().isBlank()) {
+            Integer maNVInt;
+            try {
+                maNVInt = Integer.parseInt(request.getMaNV().trim());
+            } catch (NumberFormatException e) {
+                maNVInt = null;
+            }
+            if (maNVInt != null && request.getThoiGian() != null) {
+                boolean conflict = repository.existsConflictNhanVien(
+                        maNVInt,
+                        request.getThoiGian(),
+                        request.getMaLich() // null khi tạo mới, có giá trị khi cập nhật
+                );
+                if (conflict) {
+                    throw new RuntimeException(
+                            "Nhân viên đã có lịch hẹn trong khung giờ này (±60 phút). " +
+                            "Vui lòng chọn nhân viên khác hoặc thay đổi thời gian.");
+                }
+            }
+        }
+
 
         return convertToDTO(repository.save(lh));
     }
@@ -196,4 +227,11 @@ public class LichHenServiceImpl extends BaseServiceImpl<LichHen, String, LichHen
     public LichHenSummaryDTO getSummary() {
         return repository.layThongKeTongQuanLichHen();
     }
+/*
+	@Override
+	public DoanhThuNhanVienDTO thongKeDoanhThuNhanVien(Integer maNV) {
+		// TODO Auto-generated method stub
+		return null;
+	}*/
+
 }
