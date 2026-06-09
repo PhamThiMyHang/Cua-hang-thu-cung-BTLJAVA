@@ -34,4 +34,12 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
 
     @Query("SELECT COUNT(DISTINCT k) FROM KhachHang k WHERE k.user IS NOT NULL")
     Long countUsersHaveKhachHang();
+
+    @Query("""
+       SELECT COUNT(DISTINCT u)
+       FROM User u
+       JOIN u.roles r
+       WHERE r.roleName = :roleName
+       """)
+    Long countByRole(@Param("roleName") String roleName);
 }

@@ -91,4 +91,13 @@ public class LichHenController extends BaseController {
                 "Lấy doanh thu nhân viên thành công"
         );
     }
+
+    @GetMapping("/summary")
+    public ResponseEntity<Map<String, Object>> getSummary() {
+
+        return resSuccess(
+                lichHenService.getSummary(),
+                "Lấy thống kê lịch hẹn thành công"
+        );
+    }
 }

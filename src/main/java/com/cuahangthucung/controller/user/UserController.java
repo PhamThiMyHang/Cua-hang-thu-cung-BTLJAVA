@@ -1,10 +1,7 @@
 package com.cuahangthucung.controller.user;
 
 import com.cuahangthucung.controller.base.BaseController;
-import com.cuahangthucung.dto.user.User.UserDTO;
-import com.cuahangthucung.dto.user.User.UserRequest;
-import com.cuahangthucung.dto.user.User.UserSearchRequest;
-import com.cuahangthucung.dto.user.User.UserSummaryDTO;
+import com.cuahangthucung.dto.user.User.*;
 import com.cuahangthucung.service.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -103,4 +100,53 @@ public class UserController extends BaseController {
         UserDTO updated = userService.linkKhachHang(userID, maKH);
         return resSuccess(updated, "Liên kết User với Khách hàng thành công");
     }
+
+    @GetMapping("/role/{roleName}")
+    public ResponseEntity<Map<String, Object>> getUsersByRole(
+            @PathVariable String roleName) {
+
+        return resSuccess(
+                userService.findByRole(roleName),
+                "Lấy danh sách theo role thành công"
+        );
+    }
+
+    @PutMapping("/{id}/change-role")
+    public ResponseEntity<Map<String, Object>> changeRole(
+            @PathVariable Integer id,
+            @RequestBody @Valid ChangeRoleRequest request) {
+
+        return resSuccess(
+                userService.changeRole(
+                        id,
+                        request.getRoleName()
+                ),
+                "Đổi role thành công"
+        );
+    }
+
+    @PutMapping("/{id}/change-username")
+    public ResponseEntity<Map<String, Object>> changeUsername(
+            @PathVariable Integer id,
+            @RequestBody @Valid ChangeUsernameRequest request) {
+
+        return resSuccess(
+                userService.changeUsername(
+                        id,
+                        request.getUsername()
+                ),
+                "Đổi username thành công"
+        );
+    }
+
+    @PutMapping("/{id}/toggle-status")
+    public ResponseEntity<Map<String, Object>> toggleStatus(
+            @PathVariable Integer id) {
+
+        return resSuccess(
+                userService.toggleStatus(id),
+                "Cập nhật trạng thái thành công"
+        );
+    }
+
 }

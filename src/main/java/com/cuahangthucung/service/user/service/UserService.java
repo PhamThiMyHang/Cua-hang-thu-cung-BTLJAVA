@@ -15,12 +15,12 @@ import java.util.Optional;
 public interface UserService extends BaseService<User, Integer> {
     // Thêm dòng này để AuthController có thể gọi được
     Optional<User> findByGmail(String gmail);
+    List<UserDTO> findByRole(String roleName);
 
     List<UserDTO> search(UserSearchRequest request);
 
     // Phiên bản có phân trang (dùng cho Controller)
     Page<UserDTO> search(UserSearchRequest request, Pageable pageable);
-
     UserDTO saveRequest(UserRequest request);
     UserDTO findByIdDTO(Integer id);
     List<UserDTO> findAllDTO();
@@ -35,4 +35,9 @@ public interface UserService extends BaseService<User, Integer> {
     // UserService.java
     UserDTO registerCustomer(UserRequest request);
 
+    UserDTO changeRole(Integer userID, String roleName);
+
+    UserDTO changeUsername( Integer userID, String username );
+
+    UserDTO toggleStatus(Integer userID);
 }

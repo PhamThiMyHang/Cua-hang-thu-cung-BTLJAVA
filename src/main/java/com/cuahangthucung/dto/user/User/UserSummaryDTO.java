@@ -13,4 +13,9 @@ public class UserSummaryDTO {
     private Long soUserInactive;
     private Long soNhanVien;
     private Long soKhachHang;
+
+    private Long soAdmin;
+    private Long soStaff;
+    private Long soKTV;
+    private Long soCustomer;
 }

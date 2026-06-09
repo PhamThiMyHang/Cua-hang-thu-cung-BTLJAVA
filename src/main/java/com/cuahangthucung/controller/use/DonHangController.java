@@ -78,4 +78,12 @@ public class DonHangController extends BaseController {
     public ResponseEntity<Map<String, Object>> getSummary() {
         return resSuccess(donHangService.getSummary(), "Lấy thống kê đơn hàng thành công");
     }
+
+    @GetMapping("/tong-doanh-thu")
+    public ResponseEntity<Map<String, Object>> getTongDoanhThu() {
+        return resSuccess(
+                donHangService.getTongDoanhThu(),
+                "Lấy tổng doanh thu thành công"
+        );
+    }
 }

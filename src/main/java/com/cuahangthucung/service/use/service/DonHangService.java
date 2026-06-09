@@ -10,6 +10,7 @@ import com.cuahangthucung.service.base.BaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -47,4 +48,6 @@ public interface DonHangService extends BaseService<DonHang, String> {
 
     // Tính doanh thu trong khoảng thời gian
     Double tinhDoanhThu(LocalDate tuNgay, LocalDate denNgay);
+
+    BigDecimal getTongDoanhThu();
 }

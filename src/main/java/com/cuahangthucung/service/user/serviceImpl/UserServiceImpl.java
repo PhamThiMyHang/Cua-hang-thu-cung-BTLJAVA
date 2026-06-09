@@ -137,12 +137,19 @@ public class UserServiceImpl extends BaseServiceImpl<User, Integer, UserReposito
 
     @Override
     public UserSummaryDTO getSummary() {
+
         return new UserSummaryDTO(
                 repository.countTotalUsers(),
-                repository.countByStatus(com.cuahangthucung.entity.user.enums.UserStatus.ACTIVE),
-                repository.countByStatus(com.cuahangthucung.entity.user.enums.UserStatus.INACTIVE),
+                repository.countByStatus(UserStatus.ACTIVE),
+                repository.countByStatus(UserStatus.INACTIVE),
+
                 repository.countUsersHaveNhanVien(),
-                repository.countUsersHaveKhachHang()
+                repository.countUsersHaveKhachHang(),
+
+                repository.countByRole("ADMIN"),
+                repository.countByRole("STAFF"),
+                repository.countByRole("KTV"),
+                repository.countByRole("CUSTOMER")
         );
     }
 
@@ -233,5 +240,81 @@ public class UserServiceImpl extends BaseServiceImpl<User, Integer, UserReposito
         }
 
         return dto;
+    }
+
+    @Override
+    public List<UserDTO> findByRole(String roleName) {
+
+        UserSearchRequest request = new UserSearchRequest();
+        request.setRoleName(roleName);
+
+        return repository.findAll(UserSpecification.getFilter(request))
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public UserDTO changeRole(
+            Integer userID,
+            String roleName) {
+
+        User user = repository.findById(userID)
+                .orElseThrow(() ->
+                        new RuntimeException("Không tìm thấy User"));
+
+        Role role = roleRepository.findByRoleName(roleName)
+                .orElseThrow(() ->
+                        new RuntimeException("Role không tồn tại"));
+
+        user.getRoles().clear();
+        user.getRoles().add(role);
+
+        return convertToDTO(
+                repository.save(user)
+        );
+    }
+
+    @Override
+    @Transactional
+    public UserDTO changeUsername(
+            Integer userID,
+            String username) {
+
+        if(repository.existsByUsername(username)) {
+            throw new RuntimeException(
+                    "Username đã tồn tại"
+            );
+        }
+
+        User user = repository.findById(userID)
+                .orElseThrow(() ->
+                        new RuntimeException("Không tìm thấy User"));
+
+        user.setUsername(username);
+
+        return convertToDTO(
+                repository.save(user)
+        );
+    }
+
+    @Override
+    @Transactional
+    public UserDTO toggleStatus(Integer userID) {
+
+        User user = repository.findById(userID)
+                .orElseThrow(() ->
+                        new RuntimeException("Không tìm thấy User"));
+
+        user.setStatus(
+                user.getStatus() == UserStatus.ACTIVE
+                        ? UserStatus.INACTIVE
+                        : UserStatus.ACTIVE
+        );
+
+        return convertToDTO(
+                repository.save(user)
+        );
     }
 }

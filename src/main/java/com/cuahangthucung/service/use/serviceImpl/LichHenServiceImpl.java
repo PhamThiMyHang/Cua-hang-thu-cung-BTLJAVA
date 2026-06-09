@@ -1,9 +1,6 @@
 package com.cuahangthucung.service.use.serviceImpl;
 
-import com.cuahangthucung.dto.use.lichhen.DoanhThuNhanVienDTO;
-import com.cuahangthucung.dto.use.lichhen.LichHenDTO;
-import com.cuahangthucung.dto.use.lichhen.LichHenRequest;
-import com.cuahangthucung.dto.use.lichhen.LichHenSearchRequest;
+import com.cuahangthucung.dto.use.lichhen.*;
 import com.cuahangthucung.entity.pet.entity.Pet;
 import com.cuahangthucung.entity.use.entity.DichVu;
 import com.cuahangthucung.entity.use.entity.LichHen;
@@ -193,5 +190,10 @@ public class LichHenServiceImpl extends BaseServiceImpl<LichHen, String, LichHen
         }
 
         return dto;
+    }
+
+    @Override
+    public LichHenSummaryDTO getSummary() {
+        return repository.layThongKeTongQuanLichHen();
     }
 }

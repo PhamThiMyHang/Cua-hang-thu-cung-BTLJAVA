@@ -14,5 +14,10 @@ public class DonHangSummaryDTO {
     private Long soPending;
     private Long soDone;
     private Long soCancel;
+
+    private Long soConfirmed;
+
+    private Long soInProgress;
     private BigDecimal doanhThuThang; // Doanh thu tháng hiện tại
+    private BigDecimal tongDoanhThu;
 }

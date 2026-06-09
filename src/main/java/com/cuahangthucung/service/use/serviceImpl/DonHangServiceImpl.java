@@ -107,19 +107,37 @@ public class DonHangServiceImpl extends BaseServiceImpl<DonHang, String, DonHang
 
     @Override
     public DonHangSummaryDTO getSummary() {
+
+        Long tongSoDonHang = repository.count();
+
+        Long soPending = repository.countByTrangThai(TrangThai.PENDING);
+
+        Long soConfirmed = repository.countByTrangThai(TrangThai.CONFIRMED);
+
+        Long soInProgress = repository.countByTrangThai(TrangThai.IN_PROGRESS);
+
+        Long soDone = repository.countByTrangThai(TrangThai.DONE);
+
+        Long soCancel = repository.countByTrangThai(TrangThai.CANCEL);
+
         LocalDate now = LocalDate.now();
         LocalDate dauThang = now.withDayOfMonth(1);
         Double doanhThuRaw = repository.tinhDoanhThuTheoKhoangThoiGian(dauThang, now);
         BigDecimal doanhThu = (doanhThuRaw != null) ? BigDecimal.valueOf(doanhThuRaw) : BigDecimal.ZERO;
+        BigDecimal tongDoanhThu = getTongDoanhThu();
 
         return new DonHangSummaryDTO(
-                repository.count(),
-                repository.countByTrangThai(TrangThai.PENDING),
-                repository.countByTrangThai(TrangThai.DONE),
-                repository.countByTrangThai(TrangThai.CANCEL),
-                doanhThu
+                tongSoDonHang,
+                soPending,
+                soConfirmed,
+                soInProgress,
+                soDone,
+                soCancel,
+                doanhThu,
+                tongDoanhThu
         );
     }
+
 
     @Override
     public String generateNextMaDH() {
@@ -221,5 +239,10 @@ public class DonHangServiceImpl extends BaseServiceImpl<DonHang, String, DonHang
         }
 
         return dto;
+    }
+
+    @Override
+    public BigDecimal getTongDoanhThu() {
+        return repository.tongDoanhThuTheoTrangThai(TrangThai.DONE);
     }
 }

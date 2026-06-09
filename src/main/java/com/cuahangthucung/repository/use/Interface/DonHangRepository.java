@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -63,4 +64,13 @@ public interface DonHangRepository extends JpaRepository<DonHang, String>, JpaSp
             "LEFT JOIN FETCH dh.nhanVien",
             countQuery = "SELECT COUNT(dh) FROM DonHang dh")
     Page<DonHang> findAll(Specification<DonHang> spec, Pageable pageable);
+    @Query("SELECT COALESCE(SUM(dh.tongTien),0) FROM DonHang dh WHERE dh.trangThai = 'DONE'")
+    BigDecimal tongDoanhThu();
+
+    @Query("""
+       SELECT COALESCE(SUM(dh.tongTien),0)
+       FROM DonHang dh
+       WHERE dh.trangThai = :trangThai
+       """)
+    BigDecimal tongDoanhThuTheoTrangThai(@Param("trangThai") TrangThai trangThai);
 }
